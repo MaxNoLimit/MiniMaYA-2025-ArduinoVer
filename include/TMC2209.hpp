@@ -27,8 +27,8 @@ private:
     uint8_t leaveTheSceneDir;
     uint8_t currentDir;
 
-    bool isStallDetected = false;   // Flag to indicate if a stall is detected
-    float constantMoveValue = 0.0f; // Default value, can be set later
+    bool isStallDetected = false;     // Flag to indicate if a stall is detected
+    float constantMoveValue = 13.48f; // Default value, can be set later
 public:
     TMCWayang(String leftOrRight);
     ~TMCWayang();
@@ -62,6 +62,7 @@ public:
 
     void DefaultPosition();
     void MeasureMovement();
+    void InterruptMiddleware();
     void DiagHandler();
 
     void setConstant(float value) { this->constantMoveValue = value; }

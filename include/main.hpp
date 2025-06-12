@@ -36,4 +36,7 @@ namespace MainFunction
 }
 
 void GPIO_Init();
+
+extern bool isJatayuStalled;
+extern bool isRahwanaSitaStalled;
 #endif // INCH_MAIN_HPP

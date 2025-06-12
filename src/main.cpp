@@ -3,10 +3,14 @@
 void setup()
 {
   Serial2.begin(115200);
+  GPIO_Init();
+  Serial2.println(F("Mini MaYA 2025 Serial Monitor"));
+  MainFunction::System_Setup();
 }
 
 void loop()
 {
+  MainFunction::USART_Comm();
 }
 
 void GPIO_Init()

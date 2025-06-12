@@ -51,7 +51,7 @@ void TMCWayang::Init()
         TMCDriver_Right.rms_current(1000); // mA
         TMCDriver_Right.microsteps(4);
         TMCDriver_Right.TCOOLTHRS(0xFFFFF); // 20bit max
-        TMCDriver_Right.semin(0);
+        TMCDriver_Right.semin(5);
 
         TMCDriver_Right.semax(2);
         TMCDriver_Right.sedn(0b01);
@@ -67,7 +67,7 @@ void TMCWayang::Init()
         TMCDriver_Left.rms_current(1000); // mA
         TMCDriver_Left.microsteps(4);
         TMCDriver_Left.TCOOLTHRS(0xFFFFF); // 20bit max
-        TMCDriver_Left.semin(0);
+        TMCDriver_Left.semin(5);
 
         TMCDriver_Left.semax(2);
         TMCDriver_Left.sedn(0b01);
@@ -80,7 +80,7 @@ void TMCWayang::Init()
 void TMCWayang::Spin_Steps(int steps, uint8_t dir)
 {
     // enable driver to spin
-    Serial2.println("Attempting to spin driver " + String(getDriverAddress()));
+    Serial2.println("Attempting to spin driver " + String(getDriverAddress() + 1));
     switch (getDriverAddress())
     {
     case 0b00:
@@ -110,35 +110,34 @@ void TMCWayang::Spin_Steps(int steps, uint8_t dir)
 
     // disable driver to spin
     digitalWrite(getEnablePin(), HIGH);
-    Serial2.println("Done Spinning TMC_1" + String(getDriverAddress()));
+    Serial2.println("Done Spinning TMC: " + String(getDriverAddress() + 1));
 }
 
 void TMCWayang::WalkToScene()
 {
     setCurrentDir(getWalkToSceneDir());
-    Spin_Steps(mm_distance_to_steps(RAIL_DISTANCE / 2), getWalkToSceneDir());
+    Spin_Steps(mm_distance_to_steps((float)(100.0 - DELRIN_SPACER_DISTANCE)), getWalkToSceneDir());
 }
 
 void TMCWayang::LeaveTheScene()
 {
-    setCurrentDir(getLeaveTheSceneDir());
-    Spin_Steps(mm_distance_to_steps(RAIL_DISTANCE / 2), getLeaveTheSceneDir());
+    DefaultPosition();
 }
 
 void TMCWayang::DefaultPosition()
 {
     setStalledStatus(false);
-    Serial2.println("Homing action driver " + String(getDriverAddress()) + "...");
+    Serial2.println("Homing action driver " + String(getDriverAddress() + 1) + "...");
     switch (getDriverAddress())
     {
     case 0b00:
-        TMCDriver_Right.TCOOLTHRS(0xAFFFF);
+        TMCDriver_Right.TCOOLTHRS(0x7FFFF);
         TMCDriver_Right.SGTHRS(HOMING_STALL_VALUE);
         TMCDriver_Right.microsteps(8);
         break;
 
     case 0b01:
-        TMCDriver_Left.TCOOLTHRS(0xAFFFF);
+        TMCDriver_Left.TCOOLTHRS(0x7FFFF);
         TMCDriver_Left.SGTHRS(HOMING_STALL_VALUE);
         TMCDriver_Left.microsteps(8);
         break;
@@ -148,20 +147,23 @@ void TMCWayang::DefaultPosition()
     digitalWrite(getEnablePin(), LOW);
     digitalWrite(getDirPin(), getLeaveTheSceneDir()); // Set direction to leave the scene
     setCurrentDir(getLeaveTheSceneDir());
-
+    // Spin function while there is no interrupt
     while (getStalledStatus() != true)
     {
+        if (digitalRead(getDiagPin()) == HIGH)
+        {
+            break;
+        }
+
         digitalWrite(getStepPin(), HIGH);
         delayMicroseconds(500);
         digitalWrite(getStepPin(), LOW);
         delayMicroseconds(500);
-        // Serial2.printf("SG_RESULT: %d\n", driver.SG_RESULT());
     }
-
     // disable driver to spin
     digitalWrite(getEnablePin(), HIGH);
-    setStalledStatus(!getStalledStatus()); // Reset the stall status after homing
-    Serial2.println("Homing action " + String(getDriverAddress()) + " done!!");
+    setStalledStatus(!getStalledStatus());
+    Serial2.println("Homing action " + String(getDriverAddress() + 1) + " done!!");
 }
 
 void TMCWayang::MeasureMovement()
@@ -172,14 +174,14 @@ void TMCWayang::MeasureMovement()
     switch (getDriverAddress())
     {
     case 0b00:
-        TMCDriver_Right.TCOOLTHRS(0xAFFFF);
-        TMCDriver_Right.SGTHRS(40);
+        TMCDriver_Right.TCOOLTHRS(0x7FFFF);
+        TMCDriver_Right.SGTHRS(HOMING_STALL_VALUE);
         TMCDriver_Right.microsteps(8);
         break;
 
     case 0b01:
-        TMCDriver_Left.TCOOLTHRS(0xAFFFF);
-        TMCDriver_Left.SGTHRS(40);
+        TMCDriver_Left.TCOOLTHRS(0x7FFFF);
+        TMCDriver_Left.SGTHRS(HOMING_STALL_VALUE);
         TMCDriver_Left.microsteps(8);
         break;
     }
@@ -190,6 +192,10 @@ void TMCWayang::MeasureMovement()
 
     while (getStalledStatus() != true)
     {
+        if (digitalRead(getDiagPin()) == HIGH)
+        {
+            break;
+        }
         digitalWrite(getStepPin(), HIGH);
         delayMicroseconds(500);
         digitalWrite(getStepPin(), LOW);
@@ -201,15 +207,16 @@ void TMCWayang::MeasureMovement()
     // disable driver to spin
     digitalWrite(getEnablePin(), HIGH);
     setStalledStatus(!getStalledStatus()); // Reset the stall status after measuring
-    Serial2.println(F("Homing action done!! 2"));
+    Serial2.println(F("Homing action done!!"));
     setConstant((float)nCount / (float)RAIL_DISTANCE); // Calculate the constant value based on the number of steps and rail distance
-    Serial2.println("Constant value 1: " + (String)getConstant());
+    Serial2.println("Constant value" + String(getDriverAddress() + 1) + ": " + (String)getConstant());
 }
 
 void TMCWayang::DiagHandler()
 {
+
     setStalledStatus(!getStalledStatus()); // Toggle the stall status
-    Serial2.println("Stall detected on driver " + String(getDriverAddress()) + ": " + String(getStalledStatus()));
+    Serial2.println("Stall detected on driver " + String(getDriverAddress() + 1) + ": " + String(getStalledStatus()));
     Spin_Steps(1, !getCurrentDir()); // Spin one step in the opposite direction to clear the stall
 }
 
