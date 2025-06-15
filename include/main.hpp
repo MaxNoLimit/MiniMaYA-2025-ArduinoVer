@@ -33,9 +33,24 @@ namespace MainFunction
     void TMC_DiagHandler_Jatayu();
     void TMC_DiagHandler_RahwanaSita();
     void USART_Comm();
+    namespace Play
+    {
+        void Play_The_Show();
+        void Pause_The_Show();
+        void Abort_The_Show();
+    }
+    namespace Calibration
+    {
+        void VSlotCalibration();
+        void Wayang_Servo();
+    }
 }
 
 void GPIO_Init();
+static void USART_Comm_Task(void *pvParam);
+static void Play_Task(void *pvParam);
+static void VSlotCalibration_Task(void *pvParam);
+static void WayangServoCalibration_Task(void *pvParam);
 
 extern bool isJatayuStalled;
 extern bool isRahwanaSitaStalled;
