@@ -50,12 +50,17 @@ public:
     void resetArray();
 };
 
-class Wayang
+class Wayang : WayangHandServo
 {
 private:
 public:
-    Wayang();  // Default constructor
-    ~Wayang(); // Destructor
+    Wayang(uint16_t leftOrRight) : WayangHandServo(leftOrRight) {} // Default constructor
+    ~Wayang() {}                                                   // Destructor
+    void pointToFront();
+    void lowPointFront();
+    void middleFront();
+    void downFront();
+    void pointToSelf();
 };
 
 #endif // INC_WAYANG_HPP
