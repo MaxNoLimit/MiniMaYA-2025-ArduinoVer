@@ -132,13 +132,13 @@ void TMCWayang::DefaultPosition()
     {
     case 0b00:
         TMCDriver_Right.TCOOLTHRS(0x7FFFF);
-        TMCDriver_Right.SGTHRS(HOMING_STALL_VALUE);
+        TMCDriver_Right.SGTHRS(HOMING_TMC_THRS_1);
         TMCDriver_Right.microsteps(8);
         break;
 
     case 0b01:
         TMCDriver_Left.TCOOLTHRS(0x7FFFF);
-        TMCDriver_Left.SGTHRS(HOMING_STALL_VALUE);
+        TMCDriver_Left.SGTHRS(HOMING_TMC_THRS_2);
         TMCDriver_Left.microsteps(8);
         break;
     }

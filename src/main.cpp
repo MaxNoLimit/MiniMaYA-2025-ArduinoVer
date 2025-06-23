@@ -10,7 +10,7 @@ void setup()
 
 void loop()
 {
-  MainFunction::USART_Comm();
+  // MainFunction::USART_Comm();
 }
 
 void GPIO_Init()

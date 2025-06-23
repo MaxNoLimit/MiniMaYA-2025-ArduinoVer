@@ -15,33 +15,47 @@ TaskHandle_t USARTCommTask_Handler, PlayTask_Handler;
 void MainFunction::System_Setup()
 {
     /* Sound System */
-    SoundSystem::Init();
+    // SoundSystem::Init();
 
     /* Wayang TMC */
     Jatayu.Init();      // Initialize the TMC2209 driver for Jatayu
     RahwanaSita.Init(); // Initialize the TMC2209 driver for Rahwana and Sita
 
-    /* Checking if Serial2 is connected */
-    if (Serial2.available())
-    {
-        /* Create USART Comm Handler*/
+    Serial2.println(F("System setup all done!!"));
+
+    /* Create USART Comm Handler*/
+    BaseType_t usart_task_result =
         xTaskCreate(
             USART_Comm_Task,
             "USART_Comm_Task",
             USART_COMM_TASK_HEAP,
             NULL,
-            2,
+            1,
             &USARTCommTask_Handler);
+
+    /* Check the result */
+    if (usart_task_result == pdPASS)
+    {
+        Serial2.println(F("USART Task created!!"));
     }
+    else
+    {
+        Serial2.println(F("Failed to create USART task!"));
+    }
+
+    vTaskStartScheduler();
 }
 
 static void USART_Comm_Task(void *pvParam)
 {
+    UNUSED(pvParam);
+    Serial2.println(F("Hi, I'm Mini MaYA 2025 USART Handler"));
     for (;;)
     {
         String command = Serial2.readStringUntil('\n');
         if (command == "PlayTheShow")
         {
+            Serial2.println(F("PlayTheShow Task created!!"));
             /* Create play task */
             xTaskCreate(
                 Play_Task,
@@ -53,17 +67,26 @@ static void USART_Comm_Task(void *pvParam)
         }
         else if (command == "PauseTheShow")
         {
+            Serial2.println(F("The show is paused!!"));
             /* Pause the play task */
-            vTaskSuspend(PlayTask_Handler);
+            if (PlayTask_Handler != NULL)
+            {
+                vTaskSuspend(PlayTask_Handler);
+            }
         }
         else if (command == "AbortTheShow")
         {
+            Serial2.println(F("The show is aborted!!"));
             /* Kill the play task */
-            vTaskDelete(PlayTask_Handler);
+            if (PlayTask_Handler != NULL)
+            {
+                vTaskDelete(PlayTask_Handler);
+            }
         }
 
         else if (command == "VSlotCalibration")
         {
+            Serial2.println(F("VSlotCalibration Task created!!"));
             /* Create vslotcalibration task */
             xTaskCreate(
                 VSlotCalibration_Task,
@@ -75,6 +98,7 @@ static void USART_Comm_Task(void *pvParam)
         }
         else if (command == "WayangServo")
         {
+            Serial2.println(F("WayangServo Task created!!"));
             /* Create wayangservo task */
             xTaskCreate(
                 WayangServoCalibration_Task,
@@ -84,35 +108,64 @@ static void USART_Comm_Task(void *pvParam)
                 1,
                 NULL);
         }
+        else if (command == "move1")
+        {
+            Serial2.println(F("move1 command"));
+            Jatayu.WalkToScene();
+        }
+        else if (command == "homing1")
+        {
+            Serial2.println(F("homing1 command"));
+            Jatayu.DefaultPosition();
+        }
+        else if (command == "move2")
+        {
+            Serial2.println(F("move2 command"));
+            RahwanaSita.WalkToScene();
+        }
+        else if (command == "homing2")
+        {
+            Serial2.println(F("homing2 command"));
+            RahwanaSita.DefaultPosition();
+        }
     }
 }
 
 static void Play_Task(void *pvParam)
 {
+    UNUSED(pvParam);
+    Serial2.println(F("Playing the show!!"));
     for (;;)
     {
 
         /* for killing its own task */
+        Serial2.println(F("Task done!!"));
         vTaskDelete(NULL);
     }
 }
 static void VSlotCalibration_Task(void *pvParam)
 {
+    UNUSED(pvParam);
+    Serial2.println(F("Calibration action!!"));
     for (;;)
     {
         /* Do VSlotCalibration feature */
         MainFunction::Calibration::VSlotCalibration();
         /* for killing its own task */
+        Serial2.println(F("Task done!!"));
         vTaskDelete(NULL);
     }
 }
 static void WayangServoCalibration_Task(void *pvParam)
 {
+    UNUSED(pvParam);
+    Serial2.println(F("Wayang Servo Calibration Action!!"));
     for (;;)
     {
         /* Do WayangServoCalibration feature */
         MainFunction::Calibration::Wayang_Servo();
         /* for killing its own task */
+        Serial2.println(F("Task done!!"));
         vTaskDelete(NULL);
     }
 }

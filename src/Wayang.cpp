@@ -1,10 +1,5 @@
 #include "Wayang.hpp"
 
-/* Destructor */
-Wayang::~Wayang()
-{
-}
-
 /* Example from sita.cpp */
 
 // takes 700 ms
