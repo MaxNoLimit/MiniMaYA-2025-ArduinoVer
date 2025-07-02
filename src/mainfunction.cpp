@@ -3,9 +3,12 @@
 #include "config.hpp"
 #include "SoundSystem.hpp"
 #include <STM32FreeRTOS.h>
+#include "Wayang.hpp"
 
-TMCWayang Jatayu("right");
-TMCWayang RahwanaSita("left");
+TMCWayang Jatayu_Horizontal("right");
+Wayang Jatayu(whatSideServo::RIGHT);
+TMCWayang RahwanaSita_Horizontal("left");
+Wayang RahwanaSita(whatSideServo::LEFT);
 
 bool isJatayuStalled = false;
 bool isRahwanaSitaStalled = false;
@@ -18,8 +21,8 @@ void MainFunction::System_Setup()
     // SoundSystem::Init();
 
     /* Wayang TMC */
-    Jatayu.Init();      // Initialize the TMC2209 driver for Jatayu
-    RahwanaSita.Init(); // Initialize the TMC2209 driver for Rahwana and Sita
+    Jatayu_Horizontal.Init();      // Initialize the TMC2209 driver for Jatayu
+    RahwanaSita_Horizontal.Init(); // Initialize the TMC2209 driver for Rahwana and Sita
 
     Serial2.println(F("System setup all done!!"));
 
@@ -88,45 +91,35 @@ static void USART_Comm_Task(void *pvParam)
         {
             Serial2.println(F("VSlotCalibration Task created!!"));
             /* Create vslotcalibration task */
-            xTaskCreate(
-                VSlotCalibration_Task,
-                "VSlotCalibration_Task",
-                VSLOT_CALIBRATION_TASK_HEAP,
-                NULL,
-                1,
-                NULL);
+            MainFunction::Calibration::VSlotCalibration();
+            Serial2.write("VSDone");
         }
         else if (command == "WayangServo")
         {
             Serial2.println(F("WayangServo Task created!!"));
             /* Create wayangservo task */
-            xTaskCreate(
-                WayangServoCalibration_Task,
-                "WayangServoCalibration_Task",
-                WAYANGSERVO_TASK_HEAP,
-                NULL,
-                1,
-                NULL);
+            MainFunction::Calibration::Wayang_Servo();
+            Serial2.write("WSDone");
         }
         else if (command == "move1")
         {
             Serial2.println(F("move1 command"));
-            Jatayu.WalkToScene();
+            Jatayu_Horizontal.WalkToScene();
         }
         else if (command == "homing1")
         {
             Serial2.println(F("homing1 command"));
-            Jatayu.DefaultPosition();
+            Jatayu_Horizontal.DefaultPosition();
         }
         else if (command == "move2")
         {
             Serial2.println(F("move2 command"));
-            RahwanaSita.WalkToScene();
+            RahwanaSita_Horizontal.WalkToScene();
         }
         else if (command == "homing2")
         {
             Serial2.println(F("homing2 command"));
-            RahwanaSita.DefaultPosition();
+            RahwanaSita_Horizontal.DefaultPosition();
         }
     }
 }
@@ -142,99 +135,6 @@ static void Play_Task(void *pvParam)
         Serial2.println(F("Task done!!"));
         vTaskDelete(NULL);
     }
-}
-static void VSlotCalibration_Task(void *pvParam)
-{
-    UNUSED(pvParam);
-    Serial2.println(F("Calibration action!!"));
-    for (;;)
-    {
-        /* Do VSlotCalibration feature */
-        MainFunction::Calibration::VSlotCalibration();
-        /* for killing its own task */
-        Serial2.println(F("Task done!!"));
-        vTaskDelete(NULL);
-    }
-}
-static void WayangServoCalibration_Task(void *pvParam)
-{
-    UNUSED(pvParam);
-    Serial2.println(F("Wayang Servo Calibration Action!!"));
-    for (;;)
-    {
-        /* Do WayangServoCalibration feature */
-        MainFunction::Calibration::Wayang_Servo();
-        /* for killing its own task */
-        Serial2.println(F("Task done!!"));
-        vTaskDelete(NULL);
-    }
-}
-
-void MainFunction::USART_Comm()
-{
-    // This function can be used to handle USART communication
-    // For example, reading commands from Serial2 and processing them
-    if (Serial2.available())
-    {
-        String command = Serial2.readStringUntil('\n'); // Read command from Serial2 until newline
-        if (command == "VSlotCalibration")
-        {
-            Jatayu.DefaultPosition();      // Call the default position method for Jatayu
-            RahwanaSita.DefaultPosition(); // Call the default position method for Rahwana and Sita
-
-            Jatayu.MeasureMovement();                                                                                     // Measure movement for Jatayu
-            Jatayu.Spin_Steps(Jatayu.mm_distance_to_steps(100.0 - DELRIN_SPACER_DISTANCE), Jatayu.getLeaveTheSceneDir()); // Spin Jatayu for 100mm distance
-            RahwanaSita.MeasureMovement();
-            RahwanaSita.Spin_Steps(RahwanaSita.mm_distance_to_steps(100.0 - DELRIN_SPACER_DISTANCE), RahwanaSita.getLeaveTheSceneDir()); // Spin Rahwana and Sita for 100mm distance
-            Serial2.println(F("V-Slot Calibration Done!"));
-        }
-        else if (command == "move1")
-        {
-            Jatayu.WalkToScene();
-        }
-        else if (command == "move2")
-        {
-            RahwanaSita.WalkToScene();
-        }
-        else if (command == "homing1")
-        {
-            Jatayu.DefaultPosition();
-        }
-        else if (command == "homing2")
-        {
-            RahwanaSita.DefaultPosition();
-        }
-        else if (command == "measure1")
-        {
-            Jatayu.MeasureMovement();                                                                                     // Measure movement for Jatayu
-            Jatayu.Spin_Steps(Jatayu.mm_distance_to_steps(100.0 - DELRIN_SPACER_DISTANCE), Jatayu.getLeaveTheSceneDir()); // Spin Jatayu for 100mm distance
-        }
-        else if (command == "measure2")
-        {
-            RahwanaSita.MeasureMovement();                                                                                               // Measure movement for Rahwana and Sita
-            RahwanaSita.Spin_Steps(RahwanaSita.mm_distance_to_steps(100.0 - DELRIN_SPACER_DISTANCE), RahwanaSita.getLeaveTheSceneDir()); // Spin Rahwana and Sita for 100mm distance
-        }
-        else
-        {
-            Serial2.println(F("Unknown command!"));
-        }
-    }
-}
-
-void MainFunction::TMC_DiagHandler_Jatayu()
-{
-    // Jatayu.DiagHandler(); // Call the diagnostic handler for Jatayu
-    isJatayuStalled = !isJatayuStalled;
-    Serial2.println(F("Jatayu Stalled!!"));
-    Jatayu.Spin_Steps(1, Jatayu.getCurrentDir());
-}
-
-void MainFunction::TMC_DiagHandler_RahwanaSita()
-{
-    // RahwanaSita.DiagHandler(); // Call the diagnostic handler for Rahwana and Sita
-    isRahwanaSitaStalled = !isRahwanaSitaStalled;
-    Serial2.println(F("RahwanaSita Stalled!!"));
-    RahwanaSita.Spin_Steps(1, RahwanaSita.getCurrentDir());
 }
 
 /* Play Feature */
@@ -254,18 +154,20 @@ void MainFunction::Play::Abort_The_Show()
 void MainFunction::Calibration::VSlotCalibration()
 {
     /* Homing both wayang */
-    Jatayu.DefaultPosition();
-    RahwanaSita.DefaultPosition();
+    Jatayu_Horizontal.DefaultPosition();
+    RahwanaSita_Horizontal.DefaultPosition();
 
     /* Measure each for calibration */
-    Jatayu.MeasureMovement();
-    RahwanaSita.MeasureMovement();
+    Jatayu_Horizontal.MeasureMovement();
+    RahwanaSita_Horizontal.MeasureMovement();
 
     /* Homing for default */
-    Jatayu.DefaultPosition();
-    RahwanaSita.DefaultPosition();
+    Jatayu_Horizontal.DefaultPosition();
+    RahwanaSita_Horizontal.DefaultPosition();
 }
 
 void MainFunction::Calibration::Wayang_Servo()
 {
+    /* make Jatayu walk to scene */
+    Jatayu_Horizontal.WalkToScene();
 }

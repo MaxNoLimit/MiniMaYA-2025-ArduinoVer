@@ -49,8 +49,6 @@ namespace MainFunction
 void GPIO_Init();
 static void USART_Comm_Task(void *pvParam);
 static void Play_Task(void *pvParam);
-static void VSlotCalibration_Task(void *pvParam);
-static void WayangServoCalibration_Task(void *pvParam);
 
 extern bool isJatayuStalled;
 extern bool isRahwanaSitaStalled;

@@ -14,6 +14,6 @@
 #define WAYANGSERVO_TASK_HEAP 1024
 
 /* For TMC2209 Purpose */
-#define HOMING_TMC_THRS_1 60
-#define HOMING_TMC_THRS_2 60
+#define HOMING_TMC_THRS_1 50
+#define HOMING_TMC_THRS_2 50
 #endif // INC_CONFIG_HPP

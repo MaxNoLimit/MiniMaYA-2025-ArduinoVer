@@ -61,6 +61,9 @@ public:
     void middleFront();
     void downFront();
     void pointToSelf();
+
+    void flick();
+    void defaultFaceOrientation();
 };
 
 #endif // INC_WAYANG_HPP
