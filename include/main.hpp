@@ -23,9 +23,9 @@
 #define SERVO5_1 PB12
 
 // Jatayu's Servos
-#define SERVO1_2 PB15
+#define SERVO1_2 PB13
 #define SERVO2_2 PB14
-#define SERVO3_2 PB13
+#define SERVO3_2 PB15
 
 namespace MainFunction
 {

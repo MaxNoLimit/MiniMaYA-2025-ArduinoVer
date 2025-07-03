@@ -115,6 +115,15 @@ void WayangHandServo::moveWhatServo(uint8_t servoNum, uint8_t degree, int desire
     case 4:
         selectedPin = getServoPin4();
         break;
+    case 5:
+        selectedPin = getServoPin5();
+        break;
+    }
+
+    if (selectedPin == 0)
+    {
+        Serial2.println(F("ignoring this since the pin is no available\n"));
+        return;
     }
 
     Serial2.println("Servo pin of " + String(selectedPin) + " is now moving");

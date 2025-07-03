@@ -168,15 +168,12 @@ void MainFunction::Calibration::VSlotCalibration()
 
 void MainFunction::Calibration::Wayang_Servo()
 {
-    /* make Jatayu walk to scene */
-    Jatayu_Horizontal.WalkToScene();
-
-    Jatayu.defaultFaceOrientation();
-    Jatayu.defaultHandPosition();
     Jatayu_Horizontal.LeaveTheScene();
+    Jatayu.flick();
+    Jatayu.defaultFaceOrientation();
 
-    // RahwanaSita_Horizontal.WalkToScene();
+    RahwanaSita_Horizontal.LeaveTheScene();
+    // RahwanaSita.flick();
     // RahwanaSita.defaultFaceOrientation();
-    // RahwanaSita.defaultHandPosition();
-    // RahwanaSita_Horizontal.LeaveTheScene();
+    RahwanaSita.defaultHandPosition();
 }

@@ -86,13 +86,13 @@ void TMCWayang::Spin_Steps(int steps, uint8_t dir)
     case 0b00:
         TMCDriver_Right.TCOOLTHRS(0xFFFFF);
         TMCDriver_Right.SGTHRS(100);
-        TMCDriver_Right.microsteps(4);
+        TMCDriver_Right.microsteps(8);
         break;
 
     case 0b01:
         TMCDriver_Left.TCOOLTHRS(0xFFFFF);
         TMCDriver_Left.SGTHRS(100);
-        TMCDriver_Left.microsteps(4);
+        TMCDriver_Left.microsteps(8);
         break;
     }
 

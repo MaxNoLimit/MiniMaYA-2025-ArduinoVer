@@ -23,13 +23,26 @@ void Wayang::pointToSelf()
 
 void Wayang::defaultHandPosition()
 {
-    defaultPosition();
-    downFront();
+    // check if this RahwanaSita
+    if (getServoPin5() != 0)
+    {
+        // Rahwana horizontal servo
+        moveWhatServo(4, 80, 200);
+        // Rahwana vertical servo
+        moveWhatServo(3, 80, 500);
+
+        // Sita horizontal servo
+        moveWhatServo(2, 80, 200);
+        // Sita vertical servo
+        moveWhatServo(1, 80, 500);
+    }
 }
 
 void Wayang::flick()
 {
     // is this wayang RahwanaSita
+    /* debug */
+    Serial2.println("\nSelected pin to spin: " + String(getServoPin5()) + "\n");
     if (getServoPin5() != 0)
     {
         Serial2.println(F("This is RahwanaSita"));
@@ -45,6 +58,8 @@ void Wayang::flick()
 void Wayang::defaultFaceOrientation()
 {
     // is this wayang RahwanaSita
+    /* debug */
+    Serial2.println("\nSelected pin to spin: " + String(getServoPin5()) + "\n");
     if (getServoPin5() != 0)
     {
         Serial2.println(F("This is RahwanaSita"));
