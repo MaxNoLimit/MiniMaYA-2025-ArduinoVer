@@ -30,9 +30,6 @@
 namespace MainFunction
 {
     void System_Setup();
-    void TMC_DiagHandler_Jatayu();
-    void TMC_DiagHandler_RahwanaSita();
-    void USART_Comm();
     namespace Play
     {
         void Play_The_Show();

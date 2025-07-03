@@ -18,7 +18,7 @@ TaskHandle_t USARTCommTask_Handler, PlayTask_Handler;
 void MainFunction::System_Setup()
 {
     /* Sound System */
-    // SoundSystem::Init();
+    SoundSystem::Init();
 
     /* Wayang TMC */
     Jatayu_Horizontal.Init();      // Initialize the TMC2209 driver for Jatayu
@@ -170,4 +170,13 @@ void MainFunction::Calibration::Wayang_Servo()
 {
     /* make Jatayu walk to scene */
     Jatayu_Horizontal.WalkToScene();
+
+    Jatayu.defaultFaceOrientation();
+    Jatayu.defaultHandPosition();
+    Jatayu_Horizontal.LeaveTheScene();
+
+    // RahwanaSita_Horizontal.WalkToScene();
+    // RahwanaSita.defaultFaceOrientation();
+    // RahwanaSita.defaultHandPosition();
+    // RahwanaSita_Horizontal.LeaveTheScene();
 }

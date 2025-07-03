@@ -21,6 +21,12 @@ void Wayang::pointToSelf()
 {
 }
 
+void Wayang::defaultHandPosition()
+{
+    defaultPosition();
+    downFront();
+}
+
 void Wayang::flick()
 {
     // is this wayang RahwanaSita

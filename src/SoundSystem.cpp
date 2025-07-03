@@ -10,7 +10,7 @@ void SoundSystem::Init()
         Serial2.println("DFPlayer Mini not found!");
         return;
     }
-
+    Serial2.println(F("Sound System is online!!"));
     myDFPlayer.volume(20); // Set volume level (0-30)
 }
 

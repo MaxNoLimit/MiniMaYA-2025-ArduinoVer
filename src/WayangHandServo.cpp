@@ -117,6 +117,7 @@ void WayangHandServo::moveWhatServo(uint8_t servoNum, uint8_t degree, int desire
         break;
     }
 
+    Serial2.println("Servo pin of " + String(selectedPin) + " is now moving");
     uint8_t curdeg = getCurrentDegServo(servoNum);
     if (curdeg - degree != 0)
     {
@@ -221,4 +222,5 @@ void WayangHandServo::moveWhatServo(uint8_t servoNum, uint8_t degree, int desire
         // do nothing
         delay(desiredDuration);
     }
+    Serial2.println("Servo pin of " + String(selectedPin) + " is done moving!!");
 }

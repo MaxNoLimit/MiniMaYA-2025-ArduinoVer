@@ -61,7 +61,7 @@ public:
     void middleFront();
     void downFront();
     void pointToSelf();
-
+    void defaultHandPosition();
     void flick();
     void defaultFaceOrientation();
 };
