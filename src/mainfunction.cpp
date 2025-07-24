@@ -151,6 +151,7 @@ void MainFunction::Play::Abort_The_Show()
 }
 
 /* Calibration Feature */
+// Just homing both wayang's gantry
 void MainFunction::Calibration::VSlotCalibration()
 {
     /* Homing both wayang */
@@ -158,12 +159,12 @@ void MainFunction::Calibration::VSlotCalibration()
     RahwanaSita_Horizontal.DefaultPosition();
 
     /* Measure each for calibration */
-    Jatayu_Horizontal.MeasureMovement();
-    RahwanaSita_Horizontal.MeasureMovement();
+    // Jatayu_Horizontal.MeasureMovement();
+    // RahwanaSita_Horizontal.MeasureMovement();
 
     /* Homing for default */
-    Jatayu_Horizontal.DefaultPosition();
-    RahwanaSita_Horizontal.DefaultPosition();
+    // Jatayu_Horizontal.DefaultPosition();
+    // RahwanaSita_Horizontal.DefaultPosition();
 }
 
 void MainFunction::Calibration::Wayang_Servo()
