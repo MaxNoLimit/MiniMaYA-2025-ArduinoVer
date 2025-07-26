@@ -4,6 +4,7 @@
 #include "SoundSystem.hpp"
 #include <STM32FreeRTOS.h>
 #include "Wayang.hpp"
+#include <string.h>
 
 TMCWayang Jatayu_Horizontal("right");
 Wayang Jatayu(whatSideServo::RIGHT);
@@ -58,15 +59,22 @@ static void USART_Comm_Task(void *pvParam)
         String command = Serial2.readStringUntil('\n');
         if (command == "PlayTheShow")
         {
-            Serial2.println(F("PlayTheShow Task created!!"));
-            /* Create play task */
-            xTaskCreate(
-                Play_Task,
-                "Play_Task",
-                PLAY_TASK_HEAP,
-                NULL,
-                1,
-                &PlayTask_Handler);
+            if (PlayTask_Handler == NULL)
+            {
+                Serial2.println(F("PlayTheShow Task created!!"));
+                /* Create play task */
+                xTaskCreate(
+                    Play_Task,
+                    "Play_Task",
+                    PLAY_TASK_HEAP,
+                    NULL,
+                    1,
+                    &PlayTask_Handler);
+            }
+            else
+            {
+                vTaskResume(PlayTask_Handler);
+            }
         }
         else if (command == "PauseTheShow")
         {
@@ -92,7 +100,17 @@ static void USART_Comm_Task(void *pvParam)
             Serial2.println(F("VSlotCalibration Task created!!"));
             /* Create vslotcalibration task */
             MainFunction::Calibration::VSlotCalibration();
+
+            /* not yet trying this method */
+
+            // /* buffer to send */
+            // uint8_t buffer_to_send[8] = "VSDone";
+
+            // /* sending buffer with custom allocation */
+            // Serial2.write(buffer_to_send, strlen((const char *)buffer_to_send));
+
             Serial2.write("VSDone");
+            Serial2.flush();
         }
         else if (command == "WayangServo")
         {
@@ -100,6 +118,7 @@ static void USART_Comm_Task(void *pvParam)
             /* Create wayangservo task */
             MainFunction::Calibration::Wayang_Servo();
             Serial2.write("WSDone");
+            Serial2.flush();
         }
         else if (command == "move1")
         {
@@ -174,7 +193,7 @@ void MainFunction::Calibration::Wayang_Servo()
     Jatayu.defaultFaceOrientation();
 
     RahwanaSita_Horizontal.LeaveTheScene();
-    // RahwanaSita.flick();
-    // RahwanaSita.defaultFaceOrientation();
+    RahwanaSita.flick();
+    RahwanaSita.defaultFaceOrientation();
     RahwanaSita.defaultHandPosition();
 }
