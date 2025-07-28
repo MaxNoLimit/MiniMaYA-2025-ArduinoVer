@@ -59,11 +59,24 @@ private:
 public:
     Wayang(uint16_t leftOrRight) : WayangHandServo(leftOrRight) {} // Default constructor
     ~Wayang() {}                                                   // Destructor
-    void pointToFront();
-    void lowPointFront();
-    void middleFront();
-    void downFront();
-    void pointToSelf();
+    void RahwanaPointToFront();
+    void RahwanaLowPointToFront();
+    void RahwanaMiddleFront();
+    void RahwanaDownFront();
+    void RahwanaPointToSelf();
+
+    void SitaPointToFront();
+    void SitaLowPointToFront();
+    void SitaMiddleFront();
+    void SitaDownFront();
+    void SitaPointToSelf();
+
+    void JatayuTakeoff();
+    void JatayuDive();
+    void JatayuTalon();
+    void JatayuDefaultFly();
+    void JatayuAttack();
+
     void defaultHandPosition();
     void flick();
     void defaultFaceOrientation();

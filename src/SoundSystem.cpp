@@ -1,6 +1,7 @@
 #include "SoundSystem.hpp"
 
 DFRobotDFPlayerMini myDFPlayer;
+HardwareSerial Serial6(PA12, PA11);
 
 void SoundSystem::Init()
 {

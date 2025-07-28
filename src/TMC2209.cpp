@@ -3,6 +3,8 @@
 #include <TMCStepper.h>
 #include "config.hpp"
 
+HardwareSerial Serial1(PA10, PA9);
+
 TMC2209Stepper TMCDriver_Right(&MY_TMC_USART_PORT, R_SENSE, DRIVER_ADDRESS1);
 TMC2209Stepper TMCDriver_Left(&MY_TMC_USART_PORT, R_SENSE, DRIVER_ADDRESS2);
 
@@ -86,13 +88,13 @@ void TMCWayang::Spin_Steps(int steps, uint8_t dir)
     case 0b00:
         TMCDriver_Right.TCOOLTHRS(0xFFFFF);
         TMCDriver_Right.SGTHRS(100);
-        TMCDriver_Right.microsteps(8);
+        TMCDriver_Right.microsteps(4);
         break;
 
     case 0b01:
         TMCDriver_Left.TCOOLTHRS(0xFFFFF);
         TMCDriver_Left.SGTHRS(100);
-        TMCDriver_Left.microsteps(8);
+        TMCDriver_Left.microsteps(4);
         break;
     }
 
@@ -116,7 +118,7 @@ void TMCWayang::Spin_Steps(int steps, uint8_t dir)
 void TMCWayang::WalkToScene()
 {
     setCurrentDir(getWalkToSceneDir());
-    Spin_Steps(mm_distance_to_steps((float)(100.0 - DELRIN_SPACER_DISTANCE)), getWalkToSceneDir());
+    Spin_Steps(mm_distance_to_steps((float)(300.0 - DELRIN_SPACER_DISTANCE)), getWalkToSceneDir());
 }
 
 void TMCWayang::LeaveTheScene()
@@ -133,13 +135,13 @@ void TMCWayang::DefaultPosition()
     case 0b00:
         TMCDriver_Right.TCOOLTHRS(0x7FFFF);
         TMCDriver_Right.SGTHRS(HOMING_TMC_THRS_1);
-        TMCDriver_Right.microsteps(8);
+        TMCDriver_Right.microsteps(4);
         break;
 
     case 0b01:
         TMCDriver_Left.TCOOLTHRS(0x7FFFF);
         TMCDriver_Left.SGTHRS(HOMING_TMC_THRS_2);
-        TMCDriver_Left.microsteps(8);
+        TMCDriver_Left.microsteps(4);
         break;
     }
 
@@ -154,11 +156,10 @@ void TMCWayang::DefaultPosition()
         {
             break;
         }
-
         digitalWrite(getStepPin(), HIGH);
-        delayMicroseconds(500);
+        delayMicroseconds(1200);
         digitalWrite(getStepPin(), LOW);
-        delayMicroseconds(500);
+        delayMicroseconds(1200);
     }
     // disable driver to spin
     digitalWrite(getEnablePin(), HIGH);
@@ -176,13 +177,13 @@ void TMCWayang::MeasureMovement()
     case 0b00:
         TMCDriver_Right.TCOOLTHRS(0x7FFFF);
         TMCDriver_Right.SGTHRS(HOMING_STALL_VALUE);
-        TMCDriver_Right.microsteps(8);
+        TMCDriver_Right.microsteps(4);
         break;
 
     case 0b01:
         TMCDriver_Left.TCOOLTHRS(0x7FFFF);
         TMCDriver_Left.SGTHRS(HOMING_STALL_VALUE);
-        TMCDriver_Left.microsteps(8);
+        TMCDriver_Left.microsteps(4);
         break;
     }
 
@@ -197,9 +198,9 @@ void TMCWayang::MeasureMovement()
             break;
         }
         digitalWrite(getStepPin(), HIGH);
-        delayMicroseconds(500);
+        delayMicroseconds(1200);
         digitalWrite(getStepPin(), LOW);
-        delayMicroseconds(500);
+        delayMicroseconds(1200);
         nCount++;
         // Serial2.printf("SG_RESULT: %d\n", driver.SG_RESULT());
     }
@@ -207,7 +208,7 @@ void TMCWayang::MeasureMovement()
     // disable driver to spin
     digitalWrite(getEnablePin(), HIGH);
     setStalledStatus(!getStalledStatus()); // Reset the stall status after measuring
-    Serial2.println(F("Homing action done!!"));
+    Serial2.println(F("Measure action done!!"));
     setConstant((float)nCount / (float)RAIL_DISTANCE); // Calculate the constant value based on the number of steps and rail distance
     Serial2.println("Constant value" + String(getDriverAddress() + 1) + ": " + (String)getConstant());
 }

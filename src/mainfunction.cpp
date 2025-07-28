@@ -101,24 +101,31 @@ static void USART_Comm_Task(void *pvParam)
             /* Create vslotcalibration task */
             MainFunction::Calibration::VSlotCalibration();
 
-            /* not yet trying this method */
+            // /* not yet trying this method */
 
             // /* buffer to send */
             // uint8_t buffer_to_send[8] = "VSDone";
 
             // /* sending buffer with custom allocation */
             // Serial2.write(buffer_to_send, strlen((const char *)buffer_to_send));
-
             Serial2.write("VSDone");
-            Serial2.flush();
+            Serial2.write('\n');
         }
         else if (command == "WayangServo")
         {
             Serial2.println(F("WayangServo Task created!!"));
             /* Create wayangservo task */
             MainFunction::Calibration::Wayang_Servo();
+
+            // /* not yet trying this method */
+
+            // /* buffer to send */
+            // uint8_t buffer_to_send[8] = "WSDone";
+
+            // /* sending buffer with custom allocation */
+            // Serial2.write(buffer_to_send, strlen((const char *)buffer_to_send));
             Serial2.write("WSDone");
-            Serial2.flush();
+            Serial2.write('\n');
         }
         else if (command == "move1")
         {
@@ -139,6 +146,91 @@ static void USART_Comm_Task(void *pvParam)
         {
             Serial2.println(F("homing2 command"));
             RahwanaSita_Horizontal.DefaultPosition();
+        }
+        else if (command == "measure1")
+        {
+            Serial2.println(F("measure1 command"));
+            Jatayu_Horizontal.MeasureMovement();
+        }
+        else if (command == "measure2")
+        {
+            Serial2.println(F("measure2 command"));
+            RahwanaSita_Horizontal.MeasureMovement();
+        }
+        else if (command == "JF")
+        {
+            Serial2.println(F("Jatayu Default Fly command"));
+            Jatayu.JatayuDefaultFly();
+        }
+
+        else if (command == "JTO")
+        {
+            Serial2.println(F("Jatayu Take Off command"));
+            Jatayu.JatayuTakeoff();
+        }
+        else if (command == "JD")
+        {
+            Serial2.println(F("Jatayu Dive command"));
+            Jatayu.JatayuDive();
+        }
+        else if (command == "JT")
+        {
+            Serial2.println(F("Jatayu Talon command"));
+            Jatayu.JatayuTalon();
+        }
+        else if (command == "JFlick")
+        {
+            Serial2.println(F("Jatayu flick command"));
+            Jatayu.flick();
+        }
+        else if (command == "RSFlick")
+        {
+            RahwanaSita.flick();
+        }
+        else if (command == "RSDef")
+        {
+            RahwanaSita.defaultFaceOrientation();
+        }
+
+        else if (command == "RPTF")
+        {
+            RahwanaSita.RahwanaPointToFront();
+        }
+        else if (command == "RLPTF")
+        {
+            RahwanaSita.RahwanaLowPointToFront();
+        }
+        else if (command == "RMF")
+        {
+            RahwanaSita.RahwanaMiddleFront();
+        }
+        else if (command == "RDF")
+        {
+            RahwanaSita.RahwanaDownFront();
+        }
+        else if (command == "RPTS")
+        {
+            RahwanaSita.RahwanaPointToSelf();
+        }
+        else if (command == "SPTF")
+        {
+            RahwanaSita.SitaPointToFront();
+        }
+        else if (command == "SLPTF")
+        {
+            RahwanaSita.SitaLowPointToFront();
+        }
+        else if (command == "SMF")
+        {
+            RahwanaSita.SitaMiddleFront();
+        }
+        else if (command == "SDF")
+        {
+            RahwanaSita.SitaDownFront();
+        }
+        else if (command == "SPTS")
+        {
+            RahwanaSita.SitaPointToSelf();
         }
     }
 }
@@ -189,11 +281,13 @@ void MainFunction::Calibration::VSlotCalibration()
 void MainFunction::Calibration::Wayang_Servo()
 {
     Jatayu_Horizontal.LeaveTheScene();
-    Jatayu.flick();
-    Jatayu.defaultFaceOrientation();
+    Jatayu.JatayuDefaultFly();
 
+    // not ready yet
     RahwanaSita_Horizontal.LeaveTheScene();
     RahwanaSita.flick();
+    RahwanaSita.SitaDownFront();
     RahwanaSita.defaultFaceOrientation();
-    RahwanaSita.defaultHandPosition();
+    RahwanaSita.RahwanaDownFront();
+    // RahwanaSita.defaultHandPosition();
 }
