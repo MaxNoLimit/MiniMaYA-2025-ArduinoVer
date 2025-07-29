@@ -109,7 +109,6 @@ static void USART_Comm_Task(void *pvParam)
             // /* sending buffer with custom allocation */
             // Serial2.write(buffer_to_send, strlen((const char *)buffer_to_send));
             Serial2.write("VSDone");
-            Serial2.write('\n');
         }
         else if (command == "WayangServo")
         {
@@ -125,7 +124,6 @@ static void USART_Comm_Task(void *pvParam)
             // /* sending buffer with custom allocation */
             // Serial2.write(buffer_to_send, strlen((const char *)buffer_to_send));
             Serial2.write("WSDone");
-            Serial2.write('\n');
         }
         else if (command == "move1")
         {
@@ -270,12 +268,12 @@ void MainFunction::Calibration::VSlotCalibration()
     RahwanaSita_Horizontal.DefaultPosition();
 
     /* Measure each for calibration */
-    // Jatayu_Horizontal.MeasureMovement();
-    // RahwanaSita_Horizontal.MeasureMovement();
+    Jatayu_Horizontal.MeasureMovement();
+    RahwanaSita_Horizontal.MeasureMovement();
 
     /* Homing for default */
-    // Jatayu_Horizontal.DefaultPosition();
-    // RahwanaSita_Horizontal.DefaultPosition();
+    Jatayu_Horizontal.DefaultPosition();
+    RahwanaSita_Horizontal.DefaultPosition();
 }
 
 void MainFunction::Calibration::Wayang_Servo()
