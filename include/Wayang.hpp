@@ -27,6 +27,8 @@ public:
     ~WayangHandServo();
     void defaultPosition();
     void moveWhatServo(uint8_t servoNumber, uint8_t degree, int desiredDuration);
+    void moveWhatServoWithTimer(uint8_t servoNumber, uint8_t degree, int desiredDuration);
+    void moveWhatServoFlick(uint8_t servoNumber, uint8_t degree, int desiredDuration);
 
     /* Simple one for servo move */
     // void flickWhatServo(uint8_t servoNumber, uint8_t degree, int desiredDuration);

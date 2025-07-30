@@ -43,6 +43,11 @@ namespace MainFunction
     }
 }
 
+namespace Episode
+{
+    void EpisodeScript();
+} // namespace Episode
+
 void GPIO_Init();
 static void USART_Comm_Task(void *pvParam);
 static void Play_Task(void *pvParam);

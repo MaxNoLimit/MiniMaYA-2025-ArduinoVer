@@ -4,27 +4,27 @@
 
 void Wayang::JatayuTakeoff()
 {
-    moveWhatServo(1, 23, 200);
-    moveWhatServo(2, 180, 500);
+    moveWhatServoWithTimer(1, 23, 200);
+    moveWhatServoWithTimer(2, 180, 500);
 }
 
 void Wayang::JatayuDive()
 {
-    moveWhatServo(1, 145, 200);
-    moveWhatServo(2, 0, 500);
+    moveWhatServoWithTimer(1, 145, 200);
+    moveWhatServoWithTimer(2, 0, 500);
 }
 
 void Wayang::JatayuTalon()
 {
-    moveWhatServo(1, 0, 200);
-    moveWhatServo(2, 90, 500);
+    moveWhatServoWithTimer(1, 0, 200);
+    moveWhatServoWithTimer(2, 90, 500);
 }
 
 void Wayang::JatayuDefaultFly()
 {
     defaultFaceOrientation();
-    moveWhatServo(1, 45, 200);
-    moveWhatServo(2, 0, 500);
+    moveWhatServoWithTimer(1, 45, 200);
+    moveWhatServoWithTimer(2, 0, 500);
 }
 
 void Wayang::SitaPointToFront()
@@ -113,13 +113,12 @@ void Wayang::flick()
     if (getServoPin5() != 0)
     {
         Serial2.println(F("This is RahwanaSita"));
-        moveWhatServo(5, 10, 1200);
-        // moveWhatServo(5, 0, 400);
+        moveWhatServoFlick(5, 0, 400);
     }
     else
     {
         Serial2.println(F("This is Jatayu"));
-        moveWhatServo(3, 180, 1200);
+        moveWhatServoWithTimer(3, 180, 1200);
     }
 }
 
@@ -131,11 +130,11 @@ void Wayang::defaultFaceOrientation()
     if (getServoPin5() != 0)
     {
         Serial2.println(F("This is RahwanaSita"));
-        moveWhatServo(5, 180, 1200);
+        moveWhatServoFlick(5, 180, 1200);
     }
     else
     {
         Serial2.println(F("This is Jatayu"));
-        moveWhatServo(3, 0, 1200);
+        moveWhatServoWithTimer(3, 0, 1200);
     }
 }

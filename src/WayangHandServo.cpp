@@ -1,5 +1,9 @@
 #include "Wayang.hpp"
 #include "main.hpp"
+#include <stdint.h>
+#include <HardwareTimer.h>
+
+HardwareTimer *ServoTimer = NULL;
 
 WayangHandServo::WayangHandServo(uint8_t leftOrRight)
 {
@@ -97,7 +101,7 @@ void WayangHandServo::setCurrentDegServo(uint8_t servoNum, uint8_t degree)
 
 void WayangHandServo::moveWhatServo(uint8_t servoNum, uint8_t degree, int desiredDuration)
 {
-    uint16_t selectedPin;
+    uint32_t selectedPin;
     switch (servoNum)
     {
     case 1:
@@ -232,4 +236,132 @@ void WayangHandServo::moveWhatServo(uint8_t servoNum, uint8_t degree, int desire
         delay(desiredDuration);
     }
     Serial2.println("Servo pin of " + String(selectedPin) + " is done moving!!");
+}
+
+void WayangHandServo::moveWhatServoWithTimer(uint8_t servoNumber, uint8_t degree, int desiredDuration)
+{
+    uint32_t selectedPin;
+    switch (servoNumber)
+    {
+    case 1:
+        selectedPin = getServoPin1();
+        break;
+
+    case 2:
+        selectedPin = getServoPin2();
+        break;
+
+    case 3:
+        selectedPin = getServoPin3();
+        break;
+
+    case 4:
+        selectedPin = getServoPin4();
+        break;
+    case 5:
+        selectedPin = getServoPin5();
+        break;
+    }
+
+    if (selectedPin == 0)
+    {
+        Serial2.println(F("ignoring this since the pin is no available\n"));
+        return;
+    }
+
+    uint8_t degDiff = abs(currentDeg[servoNumber - 1] - degree);
+    if (degDiff != 0)
+    {
+        // uint8_t waveAmount = duration / 20;
+        delay(desiredDuration % 20);
+        uint8_t largemismatch = degDiff; // must
+        uint8_t divVar = 1;              // must
+
+        // subdivide until nondec
+        while ((desiredDuration / 20) / largemismatch < 1)
+        {
+            largemismatch = largemismatch / 2;
+            divVar = divVar * 2;
+        }
+
+        int sign = 1;
+        if (currentDeg[servoNumber - 1] > degree)
+        {
+            sign = sign * (-1);
+        }
+
+        if ((degDiff % divVar) != 0)
+        {
+            for (int i = 0; i < ((desiredDuration / 20) % largemismatch); i++)
+            {
+                ServoTimer->setCaptureCompare(STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(selectedPin), PinMap_PWM)), degreeToDelay(currentDeg[servoNumber - 1] + (degDiff % divVar) * sign), MICROSEC_COMPARE_FORMAT);
+                delay(20);
+            }
+        }
+
+        for (int i = 0; i < largemismatch; i++)
+        {
+            for (int j = 0; j < ((desiredDuration / 20) / largemismatch); j++)
+            {
+                ServoTimer->setCaptureCompare(STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(selectedPin), PinMap_PWM)), degreeToDelay(currentDeg[servoNumber - 1] + (i * divVar) * sign), MICROSEC_COMPARE_FORMAT);
+                delay(20);
+            }
+        }
+
+        if ((degDiff % divVar) == 0 && ((desiredDuration / 20) % largemismatch) != 0)
+        {
+            for (int i = 0; i < ((desiredDuration / 20) % largemismatch); i++)
+            {
+                ServoTimer->setCaptureCompare(STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(selectedPin), PinMap_PWM)), degreeToDelay(degree), MICROSEC_COMPARE_FORMAT);
+                delay(20);
+            }
+        }
+    }
+    else
+    {
+        ServoTimer->setCaptureCompare(STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(selectedPin), PinMap_PWM)), degreeToDelay(degree), MICROSEC_COMPARE_FORMAT);
+        delay(desiredDuration);
+    }
+
+    currentDeg[servoNumber - 1] = degree;
+}
+
+void WayangHandServo::moveWhatServoFlick(uint8_t servoNumber, uint8_t degree, int desiredDuration)
+{
+    uint32_t selectedPin;
+    switch (servoNumber)
+    {
+    case 1:
+        selectedPin = getServoPin1();
+        break;
+
+    case 2:
+        selectedPin = getServoPin2();
+        break;
+
+    case 3:
+        selectedPin = getServoPin3();
+        break;
+
+    case 4:
+        selectedPin = getServoPin4();
+        break;
+    case 5:
+        selectedPin = getServoPin5();
+        break;
+    }
+    if (selectedPin == 0)
+    {
+        Serial2.println(F("ignoring this since the pin is no available\n"));
+        return;
+    }
+    delay(desiredDuration % 20);
+    for (int i = 0; i < desiredDuration / 20; i++)
+    {
+        digitalWrite(selectedPin, HIGH);
+        delayMicroseconds(degreeToDelay(degree));
+        digitalWrite(selectedPin, LOW);
+        delayMicroseconds(getWavePeriod() - degreeToDelay(degree));
+    }
+    setCurrentDegServo(servoNumber, degree);
 }
