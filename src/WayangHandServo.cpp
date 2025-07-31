@@ -3,8 +3,6 @@
 #include <stdint.h>
 #include <HardwareTimer.h>
 
-HardwareTimer *ServoTimer = NULL;
-
 WayangHandServo::WayangHandServo(uint8_t leftOrRight)
 {
     switch (leftOrRight)
@@ -240,6 +238,7 @@ void WayangHandServo::moveWhatServo(uint8_t servoNum, uint8_t degree, int desire
 
 void WayangHandServo::moveWhatServoWithTimer(uint8_t servoNumber, uint8_t degree, int desiredDuration)
 {
+    HardwareTimer *ServoTimer = NULL;
     uint32_t selectedPin;
     switch (servoNumber)
     {
@@ -268,6 +267,16 @@ void WayangHandServo::moveWhatServoWithTimer(uint8_t servoNumber, uint8_t degree
         Serial2.println(F("ignoring this since the pin is no available\n"));
         return;
     }
+    TIM_TypeDef *instance = (TIM_TypeDef *)pinmap_peripheral(digitalPinToPinName(selectedPin), PinMap_PWM);
+    if (instance == NULL)
+    {
+        Serial2.println("Error: Pin is not PWM capable or timer instance not found!");
+        return;
+    }
+    ServoTimer = new HardwareTimer(instance);
+
+    ServoTimer->setPWM(STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(selectedPin), PinMap_PWM)), selectedPin, 50, 0); // Start with 0ms pulse
+                                                                                                                            // Set the compare format to microseconds
 
     uint8_t degDiff = abs(currentDeg[servoNumber - 1] - degree);
     if (degDiff != 0)
