@@ -2,90 +2,104 @@
 
 /* Example from sita.cpp */
 
+// Takes 700 ms
 void Wayang::JatayuTakeoff()
 {
-    moveWhatServoWithTimer(1, 23, 200);
-    moveWhatServoWithTimer(2, 180, 500);
+    moveWhatServoWithBitBang(1, 23, 200);
+    moveWhatServoWithBitBang(2, 180, 500);
 }
 
+// Takes 700 ms
 void Wayang::JatayuDive()
 {
-    moveWhatServoWithTimer(1, 145, 200);
-    moveWhatServoWithTimer(2, 0, 500);
+    moveWhatServoWithBitBang(1, 145, 200);
+    moveWhatServoWithBitBang(2, 0, 500);
 }
 
+// Takes 700 ms
 void Wayang::JatayuTalon()
 {
-    moveWhatServoWithTimer(1, 0, 200);
-    moveWhatServoWithTimer(2, 90, 500);
+    moveWhatServoWithBitBang(1, 0, 200);
+    moveWhatServoWithBitBang(2, 90, 500);
 }
 
+// Takes 700 ms
 void Wayang::JatayuDefaultFly()
 {
-    defaultFaceOrientation();
-    moveWhatServoWithTimer(1, 45, 200);
-    moveWhatServoWithTimer(2, 0, 500);
+    // defaultFaceOrientation();
+    moveWhatServoWithBitBang(1, 45, 200);
+    moveWhatServoWithBitBang(2, 0, 500);
 }
 
+// Takes 700 ms
 void Wayang::SitaPointToFront()
 {
-    moveWhatServo(1, 180, 500);
-    moveWhatServo(2, 150, 200);
+    moveWhatServoWithBitBang(1, 180, 500);
+    moveWhatServoWithBitBang(2, 150, 200);
 }
 
+// Takes 700 ms
 void Wayang::SitaLowPointToFront()
 {
-    moveWhatServo(1, 90, 500);
-    moveWhatServo(2, 130, 200);
+    moveWhatServoWithBitBang(1, 90, 500);
+    moveWhatServoWithBitBang(2, 130, 200);
 }
 
+// Takes 700 ms
 void Wayang::SitaMiddleFront()
 {
-    moveWhatServo(1, 150, 500);
-    moveWhatServo(2, 120, 200);
+    moveWhatServoWithBitBang(1, 150, 500);
+    moveWhatServoWithBitBang(2, 120, 200);
 }
 
+// Takes 700 ms
 void Wayang::SitaDownFront()
 {
-    moveWhatServo(1, 0, 500);
-    moveWhatServo(2, 121, 200);
+    moveWhatServoWithBitBang(1, 0, 500);
+    moveWhatServoWithBitBang(2, 121, 200);
 }
 
+// Takes 900 ms
 void Wayang::SitaPointToSelf()
 {
-    moveWhatServo(2, 60, 200);
-    moveWhatServo(1, 180, 500);
-    moveWhatServo(2, 100, 200);
+    moveWhatServoWithBitBang(2, 60, 200);
+    moveWhatServoWithBitBang(1, 180, 500);
+    moveWhatServoWithBitBang(2, 100, 200);
 }
 
+// Takes 700 ms
 void Wayang::RahwanaPointToFront()
 {
-    moveWhatServo(3, 0, 500);
-    moveWhatServo(4, 72, 200);
+    moveWhatServoWithBitBang(3, 0, 500);
+    moveWhatServoWithBitBang(4, 72, 200);
 }
 
+// Takes 700 ms
 void Wayang::RahwanaLowPointToFront()
 {
-    moveWhatServo(3, 90, 500);
-    moveWhatServo(4, 80, 200);
+    moveWhatServoWithBitBang(3, 90, 500);
+    moveWhatServoWithBitBang(4, 80, 200);
 }
 
+// Takes 500 ms needs to Down Front first
 void Wayang::RahwanaMiddleFront()
 {
-    moveWhatServo(3, 0, 500);
+    moveWhatServoWithBitBang(3, 0, 500);
 }
 
+// Takes 700 ms
 void Wayang::RahwanaDownFront()
 {
-    moveWhatServo(3, 180, 500);
-    moveWhatServo(4, 87, 200);
+    moveWhatServoWithBitBang(3, 180, 500);
+    moveWhatServoWithBitBang(4, 87, 200);
 }
 
+// Takes 900 ms
 void Wayang::RahwanaPointToSelf()
 {
-    moveWhatServo(4, 140, 200);
-    moveWhatServo(3, 0, 500);
-    moveWhatServo(4, 110, 200);
+    moveWhatServoWithBitBang(4, 140, 200);
+    moveWhatServoWithBitBang(3, 0, 500);
+    moveWhatServoWithBitBang(4, 110, 200);
 }
 
 void Wayang::defaultHandPosition()
@@ -93,15 +107,8 @@ void Wayang::defaultHandPosition()
     // check if this RahwanaSita
     if (getServoPin5() != 0)
     {
-        // Rahwana horizontal servo
-        moveWhatServo(4, 80, 200);
-        // Rahwana vertical servo
-        moveWhatServo(3, 80, 500);
-
-        // Sita horizontal servo
-        moveWhatServo(2, 80, 200);
-        // Sita vertical servo
-        moveWhatServo(1, 80, 500);
+        RahwanaDownFront();
+        SitaDownFront();
     }
 }
 
@@ -113,12 +120,12 @@ void Wayang::flick()
     if (getServoPin5() != 0)
     {
         Serial2.println(F("This is RahwanaSita"));
-        moveWhatServoFlick(5, 0, 2000);
+        moveWhatServo(5, 0, 1200);
     }
     else
     {
         Serial2.println(F("This is Jatayu"));
-        moveWhatServoWithTimer(3, 180, 1200);
+        moveWhatServoWithBitBang(3, 180, 1200);
     }
 }
 
@@ -130,11 +137,11 @@ void Wayang::defaultFaceOrientation()
     if (getServoPin5() != 0)
     {
         Serial2.println(F("This is RahwanaSita"));
-        moveWhatServoFlick(5, 180, 2000);
+        moveWhatServo(5, 180, 1200);
     }
     else
     {
         Serial2.println(F("This is Jatayu"));
-        moveWhatServoWithTimer(3, 0, 1200);
+        moveWhatServoWithBitBang(3, 0, 1200);
     }
 }

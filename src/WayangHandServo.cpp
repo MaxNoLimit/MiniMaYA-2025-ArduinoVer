@@ -97,7 +97,7 @@ void WayangHandServo::setCurrentDegServo(uint8_t servoNum, uint8_t degree)
     }
 }
 
-void WayangHandServo::moveWhatServo(uint8_t servoNum, uint8_t degree, int desiredDuration)
+void WayangHandServo::moveWhatServoWithBitBang(uint8_t servoNum, uint8_t degree, int desiredDuration)
 {
     uint32_t selectedPin;
     switch (servoNum)
@@ -236,7 +236,7 @@ void WayangHandServo::moveWhatServo(uint8_t servoNum, uint8_t degree, int desire
     Serial2.println("Servo pin of " + String(selectedPin) + " is done moving!!");
 }
 
-void WayangHandServo::moveWhatServoWithTimer(uint8_t servoNumber, uint8_t degree, int desiredDuration)
+void WayangHandServo::moveWhatServo(uint8_t servoNumber, uint8_t degree, int desiredDuration)
 {
     HardwareTimer *ServoTimer = NULL;
     uint32_t selectedPin;
@@ -270,7 +270,8 @@ void WayangHandServo::moveWhatServoWithTimer(uint8_t servoNumber, uint8_t degree
     TIM_TypeDef *instance = (TIM_TypeDef *)pinmap_peripheral(digitalPinToPinName(selectedPin), PinMap_PWM);
     if (instance == NULL)
     {
-        Serial2.println("Error: Pin is not PWM capable or timer instance not found!");
+        Serial2.println("Error: Pin is not PWM capable or timer instance not found! Redirect to Bit_Bang!!");
+        moveWhatServoWithBitBang(servoNumber, degree, desiredDuration);
         return;
     }
     ServoTimer = new HardwareTimer(instance);

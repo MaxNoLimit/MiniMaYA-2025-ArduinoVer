@@ -100,14 +100,6 @@ static void USART_Comm_Task(void *pvParam)
             Serial2.println(F("VSlotCalibration Task created!!"));
             /* Create vslotcalibration task */
             MainFunction::Calibration::VSlotCalibration();
-
-            // /* not yet trying this method */
-
-            // /* buffer to send */
-            // uint8_t buffer_to_send[8] = "VSDone";
-
-            // /* sending buffer with custom allocation */
-            // Serial2.write(buffer_to_send, strlen((const char *)buffer_to_send));
             Serial2.write("VSDone");
         }
         else if (command == "WayangServo")
@@ -115,14 +107,6 @@ static void USART_Comm_Task(void *pvParam)
             Serial2.println(F("WayangServo Task created!!"));
             /* Create wayangservo task */
             MainFunction::Calibration::Wayang_Servo();
-
-            // /* not yet trying this method */
-
-            // /* buffer to send */
-            // uint8_t buffer_to_send[8] = "WSDone";
-
-            // /* sending buffer with custom allocation */
-            // Serial2.write(buffer_to_send, strlen((const char *)buffer_to_send));
             Serial2.write("WSDone");
         }
         else if (command == "move1")
@@ -159,6 +143,10 @@ static void USART_Comm_Task(void *pvParam)
         {
             Serial2.println(F("Jatayu Default Fly command"));
             Jatayu.JatayuDefaultFly();
+        }
+        else if (command == "JDef")
+        {
+            Jatayu.defaultFaceOrientation();
         }
 
         else if (command == "JTO")
@@ -241,12 +229,15 @@ static void Play_Task(void *pvParam)
     for (;;)
     {
         /* The show begin! */
+        MainFunction::Calibration::Wayang_Servo();
 
         /* Sita */
         RahwanaSita.flick();
         RahwanaSita_Horizontal.WalkToScene();
         // (1272) (sobbing)
-
+        vTaskDelay(1272 / portTICK_PERIOD_MS);
+        RahwanaSita.SitaPointToSelf();
+        vTaskDelay(1977 - 900);
         // (1977) O Laksmana,
 
         // (3591) Forgive me (4453) and do not be angry with me. (6034)
@@ -403,13 +394,12 @@ void MainFunction::Calibration::VSlotCalibration()
 void MainFunction::Calibration::Wayang_Servo()
 {
     Jatayu_Horizontal.LeaveTheScene();
+    Jatayu.defaultFaceOrientation();
     Jatayu.JatayuDefaultFly();
 
-    // not ready yet
     RahwanaSita_Horizontal.LeaveTheScene();
     RahwanaSita.flick();
     RahwanaSita.SitaDownFront();
     RahwanaSita.defaultFaceOrientation();
     RahwanaSita.RahwanaDownFront();
-    // RahwanaSita.defaultHandPosition();
 }

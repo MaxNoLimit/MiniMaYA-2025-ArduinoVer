@@ -19,8 +19,8 @@
 #define SERVO1_1 PB0
 #define SERVO2_1 PB1
 #define SERVO3_1 PB2
-#define SERVO4_1 PB10
-#define SERVO5_1 PB12
+#define SERVO4_1 PB12
+#define SERVO5_1 PB10
 
 // Jatayu's Servos
 #define SERVO1_2 PB13
