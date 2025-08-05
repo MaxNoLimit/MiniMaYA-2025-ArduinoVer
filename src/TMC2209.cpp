@@ -117,13 +117,25 @@ void TMCWayang::Spin_Steps(int steps, uint8_t dir)
 
 void TMCWayang::WalkToScene()
 {
-    setCurrentDir(getWalkToSceneDir());
     Spin_Steps(mm_distance_to_steps((float)(300.0 - DELRIN_SPACER_DISTANCE)), getWalkToSceneDir());
 }
 
 void TMCWayang::LeaveTheScene()
 {
     DefaultPosition();
+}
+
+void TMCWayang::goToWhatPosition(float desiredPosition)
+{
+    if (desiredPosition > getCurrentPosition())
+    {
+        Spin_Steps(mm_distance_to_steps((float)(desiredPosition - getCurrentPosition() - DELRIN_SPACER_DISTANCE)), getWalkToSceneDir());
+    }
+    else
+    {
+        Spin_Steps(mm_distance_to_steps((float)(getCurrentPosition() - desiredPosition - DELRIN_SPACER_DISTANCE)), getLeaveTheSceneDir());
+    }
+    setCurrentPosition(desiredPosition);
 }
 
 void TMCWayang::DefaultPosition()

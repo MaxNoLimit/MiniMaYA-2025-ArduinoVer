@@ -18,6 +18,7 @@
 class TMCWayang
 {
 private:
+    float currentPosition = 0;
     uint8_t driverAddress;
     uint8_t enablePin;
     uint8_t stepPin;
@@ -43,6 +44,7 @@ public:
     void setLeaveTheSceneDir(uint8_t dir) { this->leaveTheSceneDir = dir; }
     void setStalledStatus(bool status) { this->isStallDetected = status; }
     void setCurrentDir(uint8_t dir) { this->currentDir = dir; }
+    void setCurrentPosition(float pos) { this->currentPosition = pos; }
 
     /* Getter */
     const uint8_t getDriverAddress() { return this->driverAddress; }
@@ -54,15 +56,16 @@ public:
     const uint8_t getLeaveTheSceneDir() { return this->leaveTheSceneDir; }
     const bool getStalledStatus() { return this->isStallDetected; }
     const uint8_t getCurrentDir() { return this->currentDir; }
+    const float getCurrentPosition() { return this->currentPosition; }
 
     void Init();
     void Spin_Steps(int steps, uint8_t dir);
     void WalkToScene();
     void LeaveTheScene();
+    void goToWhatPosition(float desiredPostion);
 
     void DefaultPosition();
     void MeasureMovement();
-    void InterruptMiddleware();
     void DiagHandler();
 
     void setConstant(float value) { this->constantMoveValue = value; }

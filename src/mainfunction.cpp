@@ -231,56 +231,121 @@ static void Play_Task(void *pvParam)
         /* The show begin! */
         MainFunction::Calibration::Wayang_Servo();
 
-        /* Sita */
         RahwanaSita.flick();
-        RahwanaSita_Horizontal.WalkToScene();
+        RahwanaSita_Horizontal.goToWhatPosition(200.0);
+
+        /* Sita */
+        /* put sita audio here ... */
+
         // (1272) (sobbing)
         vTaskDelay(1272 / portTICK_PERIOD_MS);
         RahwanaSita.SitaPointToSelf();
-        vTaskDelay(1977 - 900);
+        vTaskDelay(1977 - 900 / portTICK_PERIOD_MS);
+
         // (1977) O Laksmana,
+        RahwanaSita.SitaDownFront();
+        RahwanaSita.SitaMiddleFront();
+        vTaskDelay(3591 - 1977 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (3591) Forgive me (4453) and do not be angry with me. (6034)
+        RahwanaSita.SitaPointToFront();
+        vTaskDelay(4453 - 3591 - 700 / portTICK_PERIOD_MS);
+
+        RahwanaSita.SitaDownFront();
+        RahwanaSita.SitaMiddleFront();
+        vTaskDelay(6034 - 4453 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (6544) I am the sinful one,
+        RahwanaSita.SitaDownFront();
+        RahwanaSita.SitaPointToSelf();
+        vTaskDelay(8144 - 6544 - 700 - 900 / portTICK_PERIOD_MS);
 
         // (8125) i did not realize that you disobey my order out of love. (11554)
+        RahwanaSita.SitaDownFront();
+        RahwanaSita.SitaPointToFront();
+        vTaskDelay(11554 - 8144 - 700 - 700 - 700 / portTICK_PERIOD_MS);
+        RahwanaSita.SitaDownFront();
 
         // (12135) How constant (13231) is the mind of a noble- minded man,
+        vTaskDelay(12135 - 11554 / portTICK_PERIOD_MS);
+        RahwanaSita.SitaMiddleFront();
+        vTaskDelay(15579 - 12135 - 700 / portTICK_PERIOD_MS);
 
         // (15579) when he receives rude words,
+        RahwanaSita.SitaLowPointToFront();
+        vTaskDelay(17570 - 15579 - 700 / portTICK_PERIOD_MS);
 
         // (17570) he just leaves.
+        RahwanaSita.SitaMiddleFront();
+        vTaskDelay(18832 - 17570 - 700 / portTICK_PERIOD_MS);
 
         // (18832) Therefore you were right,
+        RahwanaSita.SitaPointToFront();
+        vTaskDelay(20289 - 18832 - 700 / portTICK_PERIOD_MS);
 
         // (20289) not wrong.
+        RahwanaSita.SitaLowPointToFront();
+        vTaskDelay(21442 - 20289 - 700 / portTICK_PERIOD_MS);
 
         // (21442) Because of my harsh words you left me.
+        RahwanaSita.SitaDownFront();
+        RahwanaSita.SitaPointToSelf();
+        vTaskDelay(24336 - 21442 - 700 - 900 / portTICK_PERIOD_MS);
 
         // (24336) But a noble-minded person,
+        RahwanaSita.SitaDownFront();
+        RahwanaSita.SitaMiddleFront();
+        vTaskDelay(26128 - 24336 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (26128) given harsh words,
+        RahwanaSita.SitaPointToFront();
+        vTaskDelay(27547 - 26128 - 700 / portTICK_PERIOD_MS);
 
         // (27547) is a little angry only for a while.
+        RahwanaSita.SitaLowPointToFront();
+        vTaskDelay(30114 - 27547 - 700 / portTICK_PERIOD_MS);
 
         // (30114) If he sees,
+        RahwanaSita.SitaMiddleFront();
+        vTaskDelay(31310 - 30114 - 700 / portTICK_PERIOD_MS);
 
         // (31310) that the evil person who says harsh words
+        RahwanaSita.SitaDownFront();
+        RahwanaSita.SitaPointToFront();
+        vTaskDelay(34182 - 31310 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (34182) meets misfortune and is miserable,
+        RahwanaSita.SitaDownFront();
+        RahwanaSita.SitaMiddleFront();
+        vTaskDelay(37087 - 34182 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (37087) he will come forward to help him out of compassion.
+        RahwanaSita.SitaDownFront();
+        RahwanaSita.SitaPointToFront();
+        vTaskDelay(40640 - 37087 - 700 - 700 - 700 / portTICK_PERIOD_MS);
+        RahwanaSita.SitaDownFront();
 
         // (40640) Therefore, O, Laksmana,
+        RahwanaSita.SitaPointToFront();
+        vTaskDelay(42474 - 40640 - 700 / portTICK_PERIOD_MS);
 
         // (42474) noble and gentle brother,
+        RahwanaSita.SitaLowPointToFront();
+        vTaskDelay(44855 - 42474 - 700 / portTICK_PERIOD_MS);
 
         // (44855) come and save me from great distress.
+        RahwanaSita.SitaPointToFront();
+        vTaskDelay(47655 - 44855 - 700 / portTICK_PERIOD_MS);
 
         // (47655) Your curse has come true,
+        RahwanaSita.SitaDownFront();
+        RahwanaSita.SitaMiddleFront();
+        vTaskDelay(49775 - 47655 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (49775) now I am captured by the enemy.
+        RahwanaSita.SitaDownFront();
+        RahwanaSita.SitaPointToSelf();
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
 
         // Back to position then switch to Rahwana
         RahwanaSita_Horizontal.DefaultPosition();
@@ -389,6 +454,12 @@ void MainFunction::Calibration::VSlotCalibration()
     /* Homing for default */
     Jatayu_Horizontal.DefaultPosition();
     RahwanaSita_Horizontal.DefaultPosition();
+
+    /* Testing */
+    Jatayu_Horizontal.goToWhatPosition(100.0);
+    Jatayu_Horizontal.goToWhatPosition(0.0);
+    RahwanaSita_Horizontal.goToWhatPosition(100.0);
+    RahwanaSita_Horizontal.goToWhatPosition(0.0);
 }
 
 void MainFunction::Calibration::Wayang_Servo()
