@@ -12,18 +12,13 @@ void SoundSystem::Init()
         return;
     }
     Serial2.println(F("Sound System is online!!"));
-    myDFPlayer.volume(20); // Set volume level (0-30)
+    myDFPlayer.volume(20);                                                    // Set volume level (0-30)
+    PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::SYSTEM_STARTS); // Play system start sound
+    delay(2000);
 }
 
 void SoundSystem::PlayAudio(uint8_t folder, uint8_t file)
 {
-    if (myDFPlayer.available())
-    {
-        myDFPlayer.playFolder(folder, file); // Play audio from specified folder and file
-        Serial2.printf("Playing audio from folder %d, file %d\n", folder, file);
-    }
-    else
-    {
-        Serial2.println("DFPlayer Mini is not available.");
-    }
+    myDFPlayer.playFolder(folder, file); // Play audio from specified folder and file
+    Serial2.printf("Playing audio from folder %d, file %d\n", folder, file);
 }

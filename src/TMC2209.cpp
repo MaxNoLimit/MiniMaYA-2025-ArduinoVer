@@ -117,7 +117,8 @@ void TMCWayang::Spin_Steps(int steps, uint8_t dir)
 
 void TMCWayang::WalkToScene()
 {
-    Spin_Steps(mm_distance_to_steps((float)(300.0 - DELRIN_SPACER_DISTANCE)), getWalkToSceneDir());
+    goToWhatPosition(getCurrentPosition() + 100.0);
+    // Spin_Steps(mm_distance_to_steps((float)(300.0 - DELRIN_SPACER_DISTANCE)), getWalkToSceneDir());
 }
 
 void TMCWayang::LeaveTheScene()
@@ -177,6 +178,7 @@ void TMCWayang::DefaultPosition()
     digitalWrite(getEnablePin(), HIGH);
     setStalledStatus(!getStalledStatus());
     Serial2.println("Homing action " + String(getDriverAddress() + 1) + " done!!");
+    setCurrentPosition(0.0); // Reset current position to 0 after homing
 }
 
 void TMCWayang::MeasureMovement()

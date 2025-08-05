@@ -229,7 +229,8 @@ static void Play_Task(void *pvParam)
     for (;;)
     {
         /* The show begin! */
-        MainFunction::Calibration::Wayang_Servo();
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::SHOW_STARTS);
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
 
         RahwanaSita.flick();
         RahwanaSita_Horizontal.goToWhatPosition(200.0);
@@ -391,10 +392,16 @@ static void Play_Task(void *pvParam)
 
         // (50214) as a friend of his late father.
 
+        RahwanaSita.defaultFaceOrientation();
         /* Rahwana */
         // (526) You Insolent bastard!
+        vTaskDelay(526 / portTICK_PERIOD_MS);
+        RahwanaSita.RahwanaPointToFront();
+        vTaskDelay(3084 - 526 / portTICK_PERIOD_MS);
 
         // (3084) Have at you!
+        RahwanaSita.RahwanaDownFront();
+        RahwanaSita.RahwanaPointToFront();
 
         // *battle phase*
 
@@ -407,6 +414,7 @@ static void Play_Task(void *pvParam)
         // Jatayu uses talon on Rahwana’s back, but this time Rahwana can retaliate
 
         // Battle ends with Rahwana walking off-stage.
+        RahwanaSita_Horizontal.LeaveTheScene();
 
         // Other voice clips reference:
 
@@ -422,6 +430,9 @@ static void Play_Task(void *pvParam)
 
         /* for killing its own task */
         Serial2.println(F("Task done!!"));
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::SHOW_IS_FINISHED);
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
+
         vTaskDelete(NULL);
     }
 }
@@ -447,7 +458,7 @@ void MainFunction::Calibration::VSlotCalibration()
     Jatayu_Horizontal.DefaultPosition();
     RahwanaSita_Horizontal.DefaultPosition();
 
-    /* Measure each for calibration */
+    // /* Measure each for calibration */
     Jatayu_Horizontal.MeasureMovement();
     RahwanaSita_Horizontal.MeasureMovement();
 
@@ -456,10 +467,13 @@ void MainFunction::Calibration::VSlotCalibration()
     RahwanaSita_Horizontal.DefaultPosition();
 
     /* Testing */
-    Jatayu_Horizontal.goToWhatPosition(100.0);
+    Jatayu_Horizontal.goToWhatPosition(200.0);
     Jatayu_Horizontal.goToWhatPosition(0.0);
-    RahwanaSita_Horizontal.goToWhatPosition(100.0);
+    RahwanaSita_Horizontal.goToWhatPosition(200.0);
     RahwanaSita_Horizontal.goToWhatPosition(0.0);
+
+    SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::CALIBRATION_DONE);
+    delay(2000); // Wait for 2 seconds to let the sound play
 }
 
 void MainFunction::Calibration::Wayang_Servo()
@@ -473,4 +487,7 @@ void MainFunction::Calibration::Wayang_Servo()
     RahwanaSita.SitaDownFront();
     RahwanaSita.defaultFaceOrientation();
     RahwanaSita.RahwanaDownFront();
+
+    SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::CALIBRATION_DONE);
+    delay(2000); // Wait for 2 seconds to let the sound play
 }
