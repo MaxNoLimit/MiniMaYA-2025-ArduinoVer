@@ -24,6 +24,13 @@ void Wayang::JatayuTalon()
 }
 
 // Takes 700 ms
+void Wayang::JatayuAttack()
+{
+    moveWhatServoWithBitBang(1, 90, 350);
+    moveWhatServoWithBitBang(1, 45, 350);
+}
+
+// Takes 700 ms
 void Wayang::JatayuDefaultFly()
 {
     // defaultFaceOrientation();
