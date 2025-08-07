@@ -15,6 +15,7 @@ bool isJatayuStalled = false;
 bool isRahwanaSitaStalled = false;
 
 TaskHandle_t USARTCommTask_Handler, PlayTask_Handler;
+TaskHandle_t RahwanaFightPhase_Handler, JatayuFightPhase_Handler;
 
 void MainFunction::System_Setup()
 {
@@ -48,6 +49,38 @@ void MainFunction::System_Setup()
     }
 
     vTaskStartScheduler();
+}
+
+static void RFP1_Task()
+{
+}
+
+static void RFP2_Task()
+{
+}
+
+static void RFP3_Task()
+{
+}
+
+static void RFFP_Task()
+{
+}
+
+static void JFP1_Task()
+{
+}
+
+static void JFP2_Task()
+{
+}
+
+static void JFP3_Task()
+{
+}
+
+static void JFFP_Task()
+{
 }
 
 static void USART_Comm_Task(void *pvParam)
@@ -469,15 +502,18 @@ static void Play_Task(void *pvParam)
 
         // *battle phase*
 
+        /*Phase 1*/
         // Rahwana attacks, but misses Jatayu.
         // How:
         // Rahwana approaches Jatayu
         // Rahwana attacks using ptf but mid-swing Jatayu dodges by backing up (just have them move at the same time immediately)
 
+        /*Phase 2*/
         // Jatayu repositions behind Rahwana and attacks him by pecking. (use JatayuAttack())
         // How:
-        // After previous action is done, Jatayu moves to behind rahwana, spins, and attack rahwana's back using jatayuattack
+        // After previous action is done, Jatayu moves to behind rahwana, spins, and attack rahwana's back using jatayuattack [illus_1]
 
+        /*Phase 3*/
         // Rahwana attemps to chase Jatayu around the stage but is always one step late
         // How:
         // Rahwana turns around while Jatayu flies across him, jatayu turns around
@@ -486,6 +522,7 @@ static void Play_Task(void *pvParam)
         // Rahwana turns around and finally faces jatayu
         // Rahwana taunts
 
+        /*Final Phase*/
         // Jatayu uses talon on Rahwana, but this time Rahwana can retaliate
         // How:
         // Rahwana blocks the attack

@@ -147,7 +147,7 @@ void Wayang::flick()
     if (getServoPin5() != 0)
     {
         Serial2.println(F("This is RahwanaSita"));
-        moveWhatServo(5, 0, 1200);
+        moveWhatServoWithBitBang(5, 0, 1200);
     }
     else
     {
@@ -164,7 +164,7 @@ void Wayang::defaultFaceOrientation()
     if (getServoPin5() != 0)
     {
         Serial2.println(F("This is RahwanaSita"));
-        moveWhatServo(5, 180, 1200);
+        moveWhatServoWithBitBang(5, 180, 1200);
     }
     else
     {
