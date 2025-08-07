@@ -30,12 +30,14 @@ void Wayang::JatayuAttack()
     moveWhatServoWithBitBang(1, 45, 350);
 }
 
+// Takes 700 ms
 void Wayang::JatayuTalkBob()
 {
     moveWhatServoWithBitBang(2, 160, 350);
     moveWhatServoWithBitBang(2, 180, 350);
 }
 
+// Takes 700 ms
 void Wayang::JatayuTalkSide()
 {
     moveWhatServoWithBitBang(1, 25, 350);
@@ -48,6 +50,12 @@ void Wayang::JatayuDefaultFly()
     // defaultFaceOrientation();
     moveWhatServoWithBitBang(1, 45, 200);
     moveWhatServoWithBitBang(2, 0, 500);
+}
+
+// parse values from outside class into class for direct control of servos
+void Wayang::JatayuDirectControl(uint8_t ServoNum, uint8_t Deg, int Duration)
+{
+    moveWhatServoWithBitBang(ServoNum, Deg, Duration);
 }
 
 // Takes 700 ms
