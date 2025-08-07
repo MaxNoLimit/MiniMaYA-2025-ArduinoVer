@@ -78,6 +78,8 @@ public:
     void JatayuTalon();
     void JatayuDefaultFly();
     void JatayuAttack();
+    void JatayuTalkBob();
+    void JatayuTalkSide();
 
     void defaultHandPosition();
     void flick();

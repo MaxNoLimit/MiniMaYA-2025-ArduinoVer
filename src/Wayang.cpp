@@ -30,6 +30,18 @@ void Wayang::JatayuAttack()
     moveWhatServoWithBitBang(1, 45, 350);
 }
 
+void Wayang::JatayuTalkBob()
+{
+    moveWhatServoWithBitBang(2, 160, 350);
+    moveWhatServoWithBitBang(2, 180, 350);
+}
+
+void Wayang::JatayuTalkSide()
+{
+    moveWhatServoWithBitBang(1, 25, 350);
+    moveWhatServoWithBitBang(1, 65, 350);
+}
+
 // Takes 700 ms
 void Wayang::JatayuDefaultFly()
 {
