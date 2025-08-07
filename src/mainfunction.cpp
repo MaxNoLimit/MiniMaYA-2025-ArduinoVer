@@ -358,39 +358,103 @@ static void Play_Task(void *pvParam)
 
         // *Garuda sounds*
 
+        vTaskDelay(1159 / portTICK_PERIOD_MS);
         // (1159) O, Dasanana,
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkBob();
+        vTaskDelay(2774 - 1159 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (2774) the evil and savage of the ascetics,
+        Jatayu.JatayuTalkSide();
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkSide();
+        Jatayu.JatayuTalkBob();
+        vTaskDelay(6026 - 2774 - 700 - 700 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (6026) because you have the heart to insult and humiliate priests.
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkBob();
+        vTaskDelay(11000 - 6026 - 700 - 700 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (11000) How debased and depraved are you!
+        Jatayu.JatayuTalkSide();
+        Jatayu.JatayuTalkSide();
+        vTaskDelay(13880 - 11000 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (13880) Come on!
+        Jatayu.JatayuDirectControl(1, 0, 700);
+        vTaskDelay(14729 - 13880 - 700 / portTICK_PERIOD_MS);
 
         // (14729) Attack me if you are really a hero in battle.
+        Jatayu.JatayuDirectControl(1, 65, 1000);
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkBob();
+        vTaskDelay(18752 - 14729 - 1000 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (18752) Although Raghawa is merciful towards the hermits,
+        Jatayu.JatayuTalkSide();
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkSide();
+        Jatayu.JatayuTalkBob();
+        vTaskDelay(22049 - 18752 - 700 - 700 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (22049) and truthful and devoted to his father,
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkBob();
+        vTaskDelay(25301 - 22049 - 700 - 700 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (25301) you have the heart to render violence upon him,
+        Jatayu.JatayuTalkSide();
+        Jatayu.JatayuTalkSide();
+        Jatayu.JatayuTalkSide();
+        vTaskDelay(28705 - 25301 - 700 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (28705) o, debased evildoer!
+        Jatayu.JatayuDirectControl(1, 0, 700);
+        vTaskDelay(31208 - 28705 - 700 / portTICK_PERIOD_MS);
 
         // (31208) How despicable you are,
+        Jatayu.JatayuDirectControl(1, 65, 1000);
+        vTaskDelay(33656 - 31208 - 1000 / portTICK_PERIOD_MS);
 
         // (33656) torturing the noble people.
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkBob();
+        vTaskDelay(36761 - 33656 - 700 - 700 - 700 / portTICK_PERIOD_MS);
 
         // (36761) This is Jatayu.
+        Jatayu.JatayuDirectControl(1, 0, 700);
+        vTaskDelay(38258 - 36761 - 700 / portTICK_PERIOD_MS);
 
         // (38258) I will destroy the outrageous ones (41161) as the Sungod destroys darkness.
+        Jatayu.JatayuDirectControl(1, 45, 700);
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkSide();
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkSide();
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkSide();
+        vTaskDelay(44526 - 38528 - 700 * 7 / portTICK_PERIOD_MS);
 
         // (44526) I am the humble servant of Rama.
+        Jatayu.JatayuDirectControl(1, 65, 1000);
+        vTaskDelay(47361 - 44526 - 1000 / portTICK_PERIOD_MS);
 
         // (47361) It is my obligation to protect Rama
+        Jatayu.JatayuDirectControl(1, 45, 700);
+        vTaskDelay(50214 - 47361 - 700 / portTICK_PERIOD_MS);
 
         // (50214) as a friend of his late father.
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkBob();
+        Jatayu.JatayuTalkBob();
+        vTaskDelay(52311 - 50214 - 700 - 700 - 700 / portTICK_PERIOD_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
 
         RahwanaSita.defaultFaceOrientation();
         /* Rahwana */
@@ -406,25 +470,47 @@ static void Play_Task(void *pvParam)
         // *battle phase*
 
         // Rahwana attacks, but misses Jatayu.
+        // How:
+        // Rahwana approaches Jatayu
+        // Rahwana attacks using ptf but mid-swing Jatayu dodges by backing up (just have them move at the same time immediately)
 
-        // Jatayu repositions behind Rahwana and attacks him by pecking. (have to use direct control)
+        // Jatayu repositions behind Rahwana and attacks him by pecking. (use JatayuAttack())
+        // How:
+        // After previous action is done, Jatayu moves to behind rahwana, spins, and attack rahwana's back using jatayuattack
 
         // Rahwana attemps to chase Jatayu around the stage but is always one step late
+        // How:
+        // Rahwana turns around while Jatayu flies across him, jatayu turns around
+        // repeat this for 2 more times
+        // Jatayu moves a larger distance away from rahwana
+        // Rahwana turns around and finally faces jatayu
+        // Rahwana taunts
 
-        // Jatayu uses talon on Rahwana’s back, but this time Rahwana can retaliate
+        // Jatayu uses talon on Rahwana, but this time Rahwana can retaliate
+        // How:
+        // Rahwana blocks the attack
+        // Jatayu falls down and moves away at the lowest height
 
         // Battle ends with Rahwana walking off-stage.
         RahwanaSita_Horizontal.LeaveTheScene();
 
-        // Other voice clips reference:
+        /* Other voice clips reference:
 
-        // (783) Rahwana_Attack_Normalized_Filtered
+        (783) Rahwana_Attack
 
-        // (937) Rahwana_Hurt1_Normalized_Filtered
+        (937) Rahwana_Hurt1
 
-        // (904) Rahwana_Hurt2_Normalized_Filtered
+        (904) Rahwana_Hurt2
 
-        // (663) Rahwana_Hurt3_Normalized_Filtered
+        (663) Rahwana_Hurt3
+
+        Rahwana_Taunt:
+
+        (1018) you pathetic avian!
+
+        (3477) get back here!
+
+        */
 
         /* End */
 

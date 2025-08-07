@@ -80,6 +80,7 @@ public:
     void JatayuAttack();
     void JatayuTalkBob();
     void JatayuTalkSide();
+    void JatayuDirectControl(uint8_t ServoNum, uint8_t Deg, int Duration);
 
     void defaultHandPosition();
     void flick();
