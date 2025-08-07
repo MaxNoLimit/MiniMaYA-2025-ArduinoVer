@@ -358,16 +358,16 @@ static void Play_Task(void *pvParam)
         vTaskDelay(1000 / portTICK_PERIOD_MS);
 
         // Back to position then switch to Rahwana
-        RahwanaSita_Horizontal.DefaultPosition();
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
+        RahwanaSita_Horizontal.goToWhatPosition(0.0);
         RahwanaSita.defaultFaceOrientation();
-        RahwanaSita_Horizontal.WalkToScene();
+        RahwanaSita_Horizontal.goToWhatPosition(200.0);
 
         /* Jatayu */
-        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
         Jatayu_Horizontal.goToWhatPosition(200.0);
 
         // *Garuda sounds*
-
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::JATAYU_DIALOGUE);
         vTaskDelay(1159 / portTICK_PERIOD_MS);
         // (1159) O, Dasanana,
         Jatayu.JatayuTalkBob();
@@ -502,7 +502,7 @@ static void Play_Task(void *pvParam)
         // Jatayu falls down and moves away at the lowest height
 
         // Battle ends with Rahwana walking off-stage.
-        RahwanaSita_Horizontal.LeaveTheScene();
+        RahwanaSita_Horizontal.goToWhatPosition(0.0);
 
         /* Other voice clips reference:
 

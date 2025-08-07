@@ -12,7 +12,7 @@ void SoundSystem::Init()
         return;
     }
     Serial2.println(F("Sound System is online!!"));
-    myDFPlayer.volume(30); // Set volume level (0-30)
+    myDFPlayer.volume(25); // Set volume level (0-30)
 }
 
 void SoundSystem::PlayAudio(uint8_t folder, uint8_t file)
