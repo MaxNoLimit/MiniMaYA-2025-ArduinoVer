@@ -24,9 +24,13 @@ void MainFunction::System_Setup()
 
     /* Wayang TMC */
     Jatayu_Horizontal.Init();      // Initialize the TMC2209 driver for Jatayu
+    delay(100);                    // Allow some time for the driver to initialize
     RahwanaSita_Horizontal.Init(); // Initialize the TMC2209 driver for Rahwana and Sita
+    delay(100);                    // Allow some time for the driver to initialize
 
     Serial2.println(F("System setup all done!!"));
+    SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::SYSTEM_STARTS); // Play system start sound
+    delay(2000);
 
     /* Create USART Comm Handler*/
     BaseType_t usart_task_result =
@@ -106,6 +110,8 @@ static void USART_Comm_Task(void *pvParam)
             }
             else
             {
+                SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::SHOW_IS_RESUMED);
+                delay(1000);
                 vTaskResume(PlayTask_Handler);
             }
         }
@@ -113,6 +119,7 @@ static void USART_Comm_Task(void *pvParam)
         {
             Serial2.println(F("The show is paused!!"));
             /* Pause the play task */
+            SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::SHOW_IS_PAUSED);
             if (PlayTask_Handler != NULL)
             {
                 vTaskSuspend(PlayTask_Handler);
@@ -122,6 +129,7 @@ static void USART_Comm_Task(void *pvParam)
         {
             Serial2.println(F("The show is aborted!!"));
             /* Kill the play task */
+            SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::SHOW_IS_ABORTED);
             if (PlayTask_Handler != NULL)
             {
                 vTaskDelete(PlayTask_Handler);
@@ -266,10 +274,11 @@ static void Play_Task(void *pvParam)
         vTaskDelay(2000 / portTICK_PERIOD_MS);
 
         RahwanaSita.flick();
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
         RahwanaSita_Horizontal.goToWhatPosition(200.0);
 
         /* Sita */
-        /* put sita audio here ... */
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::SITA_DIALOGUE);
 
         // (1272) (sobbing)
         vTaskDelay(1272 / portTICK_PERIOD_MS);
@@ -382,15 +391,16 @@ static void Play_Task(void *pvParam)
         vTaskDelay(1000 / portTICK_PERIOD_MS);
 
         // Back to position then switch to Rahwana
-        RahwanaSita_Horizontal.DefaultPosition();
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
+        RahwanaSita_Horizontal.goToWhatPosition(0.0);
         RahwanaSita.defaultFaceOrientation();
-        RahwanaSita_Horizontal.WalkToScene();
+        RahwanaSita_Horizontal.goToWhatPosition(200.0);
 
         /* Jatayu */
-        Jatayu_Horizontal.WalkToScene();
+        Jatayu_Horizontal.goToWhatPosition(200.0);
 
         // *Garuda sounds*
-
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::JATAYU_DIALOGUE);
         vTaskDelay(1159 / portTICK_PERIOD_MS);
         // (1159) O, Dasanana,
         Jatayu.JatayuTalkBob();
@@ -529,7 +539,7 @@ static void Play_Task(void *pvParam)
         // Jatayu falls down and moves away at the lowest height
 
         // Battle ends with Rahwana walking off-stage.
-        RahwanaSita_Horizontal.LeaveTheScene();
+        RahwanaSita_Horizontal.goToWhatPosition(0.0);
 
         /* Other voice clips reference:
 
