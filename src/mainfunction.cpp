@@ -495,7 +495,6 @@ static void Play_Task(void *pvParam)
         Jatayu.JatayuTalkBob();
         Jatayu.JatayuTalkBob();
         Jatayu.JatayuTalkBob();
-        vTaskDelay(52311 - 50214 - 700 - 700 - 700 / portTICK_PERIOD_MS);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
 
         RahwanaSita.defaultFaceOrientation();
