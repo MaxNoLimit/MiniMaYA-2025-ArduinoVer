@@ -20,3 +20,15 @@ void SoundSystem::PlayAudio(uint8_t folder, uint8_t file)
     myDFPlayer.playFolder(folder, file); // Play audio from specified folder and file
     Serial2.printf("Playing audio from folder %d, file %d\n", folder, file);
 }
+
+void SoundSystem::PauseAudio()
+{
+    myDFPlayer.pause(); // Pause the currently playing audio
+    Serial2.println(F("Audio playback paused."));
+}
+
+void SoundSystem::ResumeAudio()
+{
+    myDFPlayer.start(); // Resume the paused audio
+    Serial2.println(F("Audio playback resumed."));
+}

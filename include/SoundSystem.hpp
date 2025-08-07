@@ -41,6 +41,8 @@ namespace SoundSystem
 {
     void Init();
     void PlayAudio(uint8_t folder, uint8_t file);
+    void PauseAudio();
+    void ResumeAudio();
 }
 
 #endif // INC_SOUNDSYSTEM_HPP

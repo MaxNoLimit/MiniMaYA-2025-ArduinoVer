@@ -110,16 +110,15 @@ static void USART_Comm_Task(void *pvParam)
             }
             else
             {
-                SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::SHOW_IS_RESUMED);
-                delay(1000);
                 vTaskResume(PlayTask_Handler);
+                SoundSystem::ResumeAudio();
             }
         }
         else if (command == "PauseTheShow")
         {
             Serial2.println(F("The show is paused!!"));
             /* Pause the play task */
-            SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::SHOW_IS_PAUSED);
+            SoundSystem::PauseAudio();
             if (PlayTask_Handler != NULL)
             {
                 vTaskSuspend(PlayTask_Handler);
