@@ -15,7 +15,7 @@ bool isJatayuStalled = false;
 bool isRahwanaSitaStalled = false;
 
 TaskHandle_t USARTCommTask_Handler, PlayTask_Handler;
-TaskHandle_t RahwanaFightPhase_Handler, JatayuFightPhase_Handler;
+TaskHandle_t RahwanaFightPhase_Handler, RahwanaFightPhase_SubHandler, JatayuFightPhase_Handler, JatayuFightPhase_SubHandler;
 
 void MainFunction::System_Setup()
 {
@@ -31,7 +31,6 @@ void MainFunction::System_Setup()
     Serial2.println(F("System setup all done!!"));
     SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::SYSTEM_STARTS); // Play system start sound
     delay(2000);
-
     /* Create USART Comm Handler*/
     BaseType_t usart_task_result =
         xTaskCreate(
@@ -59,6 +58,9 @@ static void RFP1_Task(void *pvParam)
 {
     for (;;)
     {
+        RahwanaSita.RahwanaPointToFront();
+        RahwanaSita.RahwanaDownFront();
+        vTaskDelete(NULL);
     }
 }
 
@@ -73,6 +75,17 @@ static void RFP3_Task(void *pvParam)
 {
     for (;;)
     {
+        RahwanaSita.flick();
+        vTaskDelete(NULL); // Delete the subtask after flicking
+    }
+}
+
+static void RFP3_AntiTask(void *pvParam)
+{
+    for (;;)
+    {
+        RahwanaSita.defaultFaceOrientation();
+        vTaskDelete(NULL); // Delete the subtask after resetting face orientation
     }
 }
 
@@ -80,6 +93,9 @@ static void RFFP_Task(void *pvParam)
 {
     for (;;)
     {
+        RahwanaSita.RahwanaDownFront();
+        RahwanaSita.RahwanaMiddleFront();
+        vTaskDelete(NULL);
     }
 }
 
@@ -87,6 +103,26 @@ static void JFP1_Task(void *pvParam)
 {
     for (;;)
     {
+        Jatayu.JatayuDirectControl(1, 0, 200); // Jatayu moves to the front position
+        vTaskDelete(NULL);                     // Delete the subtask after moving
+    }
+}
+
+static void JFP1_SubTask(void *pvParam)
+{
+    for (;;)
+    {
+        Jatayu_Horizontal.goToWhatPosition(190.0); // Jatayu moves to the front position
+        if (PlayTask_Handler != NULL)
+        {
+            vTaskResume(PlayTask_Handler); // Suspend the play task while moving
+        }
+        if (USARTCommTask_Handler != NULL)
+        {
+            vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
+        }
+
+        vTaskDelete(NULL); // Delete the subtask after moving
     }
 }
 
@@ -94,6 +130,26 @@ static void JFP2_Task(void *pvParam)
 {
     for (;;)
     {
+        Jatayu.JatayuDirectControl(3, 180, 5500); // Jatayu moves to the default position
+        vTaskDelete(NULL);                        // Delete the subtask after moving
+    }
+}
+
+static void JFP2_SubTask(void *pvParam)
+{
+    for (;;)
+    {
+        Jatayu_Horizontal.goToWhatPosition(600.0);
+        if (PlayTask_Handler != NULL)
+        {
+            vTaskResume(PlayTask_Handler); // Resume play task if it exists
+        }
+        if (USARTCommTask_Handler != NULL)
+        {
+            vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
+        }
+
+        vTaskDelete(NULL); // Delete the subtask after moving
     }
 }
 
@@ -101,6 +157,35 @@ static void JFP3_Task(void *pvParam)
 {
     for (;;)
     {
+        Jatayu.defaultFaceOrientation(); // Jatayu moves to the default face orientation
+        Jatayu_Horizontal.goToWhatPosition(280.0);
+        if (PlayTask_Handler != NULL)
+        {
+            vTaskResume(PlayTask_Handler); // Resume play task if it exists
+        }
+        if (USARTCommTask_Handler != NULL)
+        {
+            vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
+        }
+        vTaskDelete(NULL); // Delete the subtask after moving
+    }
+}
+
+static void JFP3_AntiTask(void *pvParam)
+{
+    for (;;)
+    {
+        Jatayu.flick(); // Jatayu moves to the default face orientation
+        Jatayu_Horizontal.goToWhatPosition(600.0);
+        if (PlayTask_Handler != NULL)
+        {
+            vTaskResume(PlayTask_Handler); // Resume play task if it exists
+        }
+        if (USARTCommTask_Handler != NULL)
+        {
+            vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
+        }
+        vTaskDelete(NULL); // Delete the subtask after flicking
     }
 }
 
@@ -108,6 +193,33 @@ static void JFFP_Task(void *pvParam)
 {
     for (;;)
     {
+        Jatayu.JatayuDirectControl(1, 0, 200); // Jatayu moves to the front position
+        if (PlayTask_Handler != NULL)
+        {
+            vTaskResume(PlayTask_Handler); // Resume play task if it exists
+        }
+        if (USARTCommTask_Handler != NULL)
+        {
+            vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
+        }
+        vTaskDelete(NULL); // Delete the subtask after moving
+    }
+}
+
+static void JFFP_AntiTask(void *pvParam)
+{
+    for (;;)
+    {
+        Jatayu_Horizontal.goToWhatPosition(0.0);
+        if (PlayTask_Handler != NULL)
+        {
+            vTaskResume(PlayTask_Handler); // Resume play task if it exists
+        }
+        if (USARTCommTask_Handler != NULL)
+        {
+            vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
+        }
+        vTaskDelete(NULL); // Delete the subtask after moving
     }
 }
 
@@ -176,7 +288,7 @@ static void USART_Comm_Task(void *pvParam)
         else if (command == "move1")
         {
             Serial2.println(F("move1 command"));
-            Jatayu_Horizontal.WalkToScene();
+            Jatayu_Horizontal.goToWhatPosition(100.0);
         }
         else if (command == "homing1")
         {
@@ -185,8 +297,13 @@ static void USART_Comm_Task(void *pvParam)
         }
         else if (command == "move2")
         {
+            // int hajime = 0;
+            // int sutopu = 0;
             Serial2.println(F("move2 command"));
-            RahwanaSita_Horizontal.WalkToScene();
+            // hajime = millis();
+            RahwanaSita_Horizontal.goToWhatPosition(100.0);
+            // sutopu = millis() - hajime; // time taken to move
+            // Serial2.println("Constant speed: " + String(100.0 / ((float)sutopu / 1000.0)) + " mm/s");
         }
         else if (command == "homing2")
         {
@@ -211,6 +328,7 @@ static void USART_Comm_Task(void *pvParam)
         else if (command == "JDef")
         {
             Jatayu.defaultFaceOrientation();
+            Jatayu.JatayuDirectControl(1, 90, 1000); // Jatayu moves to the default position
         }
 
         else if (command == "JTO")
@@ -282,6 +400,96 @@ static void USART_Comm_Task(void *pvParam)
         {
             RahwanaSita.SitaPointToSelf();
         }
+        else if (command == "scene1")
+        {
+            // MainFunction::Calibration::Wayang_Servo();
+
+            SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
+            Jatayu_Horizontal.goToWhatPosition(280.0);
+            RahwanaSita_Horizontal.goToWhatPosition(280.0);
+
+            vTaskDelay(1000 / portTICK_PERIOD_MS);
+            RahwanaSita_Horizontal.goToWhatPosition(500.0);
+            SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_ATTACK);
+            // (783) Rahwana_Attack
+            vTaskDelay(283 / portTICK_PERIOD_MS);
+            xTaskCreate(RFP1_Task, "RFP1_Task", 1024, NULL, 1, &RahwanaFightPhase_Handler);
+            xTaskCreate(JFP1_Task, "JFP1_Task", 1024, NULL, 1, &JatayuFightPhase_Handler);
+            xTaskCreate(JFP1_SubTask, "JFP1_SubTask", 1024, NULL, 1, &JatayuFightPhase_SubHandler);
+            vTaskSuspend(USARTCommTask_Handler); // Suspend the play task while moving
+
+            SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
+            Jatayu_Horizontal.goToWhatPosition(600.0);
+            Jatayu.flick();
+
+            SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_HURT_1);
+            vTaskDelay(237 / portTICK_PERIOD_MS); // (937) Rahwana_Hurt_1
+            Jatayu.JatayuAttack();
+
+            RahwanaSita_Horizontal.goToWhatPosition(520.0);
+            RahwanaSita_Horizontal.goToWhatPosition(500.0);
+
+            SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_HURT_2);
+            vTaskDelay(204 / portTICK_PERIOD_MS); // (904) Rahwana_Hurt_2
+            Jatayu.JatayuAttack();
+
+            RahwanaSita_Horizontal.goToWhatPosition(520.0);
+            RahwanaSita_Horizontal.goToWhatPosition(500.0);
+
+            SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_HURT_3);
+            Jatayu.JatayuAttack();
+
+            RahwanaSita_Horizontal.goToWhatPosition(520.0);
+            RahwanaSita_Horizontal.goToWhatPosition(500.0);
+
+            SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
+
+            xTaskCreate(RFP3_Task, "RFP3_Task", 1024, NULL, 1, &RahwanaFightPhase_SubHandler);
+            xTaskCreate(JFP3_Task, "JFP3_Task", 1024, NULL, 1, &JatayuFightPhase_SubHandler);
+            vTaskSuspend(USARTCommTask_Handler);
+
+            xTaskCreate(RFP3_AntiTask, "RFP3_AntiTask", 1024, NULL, 1, &RahwanaFightPhase_SubHandler);
+            xTaskCreate(JFP3_AntiTask, "JFP3_AntiTask", 1024, NULL, 1, &JatayuFightPhase_SubHandler);
+            vTaskSuspend(USARTCommTask_Handler);
+
+            xTaskCreate(RFP3_Task, "RFP3_Task", 1024, NULL, 1, &RahwanaFightPhase_SubHandler);
+            xTaskCreate(JFP3_Task, "JFP3_Task", 1024, NULL, 1, &JatayuFightPhase_SubHandler);
+            vTaskSuspend(USARTCommTask_Handler);
+
+            Jatayu_Horizontal.goToWhatPosition(150.0);
+            Jatayu.JatayuDefaultFly();
+            RahwanaSita.defaultFaceOrientation();
+            RahwanaSita_Horizontal.goToWhatPosition(300.0);
+            SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_TAUNT);
+            // (1018) you pathetic avian !
+            vTaskDelay(1018 / portTICK_PERIOD_MS);
+            RahwanaSita.RahwanaPointToFront();
+            vTaskDelay(3477 - 700 / portTICK_PERIOD_MS);
+
+            // (3477)get back here !
+            RahwanaSita.RahwanaLowPointToFront();
+            vTaskDelay(500 / portTICK_PERIOD_MS);
+            RahwanaSita.RahwanaDownFront();
+
+            SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
+            Jatayu_Horizontal.goToWhatPosition(540.0);
+
+            xTaskCreate(JFFP_Task, "JFFP_Task", 1024, NULL, 1, &JatayuFightPhase_Handler);
+            xTaskCreate(RFFP_Task, "RFFP_Task", 1024, NULL, 1, &RahwanaFightPhase_Handler);
+
+            vTaskSuspend(USARTCommTask_Handler); // Suspend the USART task while moving
+
+            RahwanaSita.RahwanaPointToFront();
+
+            Jatayu_Horizontal.LeaveTheScene();
+
+            RahwanaSita.SitaDownFront();
+            RahwanaSita_Horizontal.LeaveTheScene();
+
+            Serial2.println(F("Task done!!"));
+            SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::SHOW_IS_FINISHED);
+            vTaskDelay(2000 / portTICK_PERIOD_MS);
+        }
     }
 }
 
@@ -298,7 +506,7 @@ static void Play_Task(void *pvParam)
 
         RahwanaSita.flick();
         SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
-        RahwanaSita_Horizontal.goToWhatPosition(200.0);
+        RahwanaSita_Horizontal.goToWhatPosition(280.0);
 
         /* Sita */
         SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::SITA_DIALOGUE);
@@ -418,10 +626,10 @@ static void Play_Task(void *pvParam)
         RahwanaSita_Horizontal.goToWhatPosition(0.0);
 
         RahwanaSita.defaultFaceOrientation();
-        RahwanaSita_Horizontal.goToWhatPosition(200.0);
+        RahwanaSita_Horizontal.goToWhatPosition(280.0);
         /* Jatayu */
 
-        Jatayu_Horizontal.goToWhatPosition(200.0);
+        Jatayu_Horizontal.goToWhatPosition(280.0);
 
         // *Garuda sounds*
         SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::JATAYU_DIALOGUE);
@@ -522,8 +730,8 @@ static void Play_Task(void *pvParam)
         Jatayu.JatayuTalkBob();
         vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-        RahwanaSita.defaultFaceOrientation();
         /* Rahwana */
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_DIALOGUE);
         // (526) You Insolent bastard!
         vTaskDelay(526 / portTICK_PERIOD_MS);
         RahwanaSita.RahwanaPointToFront();
@@ -532,6 +740,7 @@ static void Play_Task(void *pvParam)
         // (3084) Have at you!
         RahwanaSita.RahwanaDownFront();
         RahwanaSita.RahwanaPointToFront();
+        RahwanaSita.RahwanaDownFront();
 
         // *battle phase*
 
@@ -562,27 +771,91 @@ static void Play_Task(void *pvParam)
         // Jatayu falls down and moves away at the lowest height
 
         // Battle ends with Rahwana walking off-stage.
-        RahwanaSita_Horizontal.goToWhatPosition(0.0);
 
         /* Other voice clips reference: */
-
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
+        RahwanaSita_Horizontal.goToWhatPosition(500.0);
         SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_ATTACK);
         // (783) Rahwana_Attack
-        vTaskDelay(783 / portTICK_PERIOD_MS);
+        vTaskDelay(283 / portTICK_PERIOD_MS);
+        xTaskCreate(RFP1_Task, "RFP1_Task", 1024, NULL, 1, &RahwanaFightPhase_Handler);
+        xTaskCreate(JFP1_Task, "JFP1_Task", 1024, NULL, 1, &JatayuFightPhase_Handler);
+        xTaskCreate(JFP1_SubTask, "JFP1_SubTask", 1024, NULL, 1, &JatayuFightPhase_SubHandler);
+        // vTaskSuspend(USARTCommTask_Handler);
+        vTaskSuspend(PlayTask_Handler); // Suspend the play task while moving
 
-        // (937) Rahwana_Hurt1
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
+        Jatayu_Horizontal.goToWhatPosition(600.0);
+        Jatayu.flick();
 
-        // (904) Rahwana_Hurt2
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_HURT_1);
+        vTaskDelay(237 / portTICK_PERIOD_MS); // (937) Rahwana_Hurt_1
+        Jatayu.JatayuAttack();
 
-        // (663) Rahwana_Hurt3
+        RahwanaSita_Horizontal.goToWhatPosition(520.0);
+        RahwanaSita_Horizontal.goToWhatPosition(500.0);
 
-        /* Rahwana_Taunt: */
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_HURT_2);
+        vTaskDelay(204 / portTICK_PERIOD_MS); // (904) Rahwana_Hurt_2
+        Jatayu.JatayuAttack();
 
+        RahwanaSita_Horizontal.goToWhatPosition(520.0);
+        RahwanaSita_Horizontal.goToWhatPosition(500.0);
+
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_HURT_3);
+        Jatayu.JatayuAttack();
+
+        RahwanaSita_Horizontal.goToWhatPosition(520.0);
+        RahwanaSita_Horizontal.goToWhatPosition(500.0);
+
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
+
+        xTaskCreate(RFP3_Task, "RFP3_Task", 1024, NULL, 1, &RahwanaFightPhase_SubHandler);
+        xTaskCreate(JFP3_Task, "JFP3_Task", 1024, NULL, 1, &JatayuFightPhase_SubHandler);
+        // vTaskSuspend(USARTCommTask_Handler);
+        vTaskSuspend(PlayTask_Handler);
+
+        xTaskCreate(RFP3_AntiTask, "RFP3_AntiTask", 1024, NULL, 1, &RahwanaFightPhase_SubHandler);
+        xTaskCreate(JFP3_AntiTask, "JFP3_AntiTask", 1024, NULL, 1, &JatayuFightPhase_SubHandler);
+        // vTaskSuspend(USARTCommTask_Handler);
+        vTaskSuspend(PlayTask_Handler);
+
+        xTaskCreate(RFP3_Task, "RFP3_Task", 1024, NULL, 1, &RahwanaFightPhase_SubHandler);
+        xTaskCreate(JFP3_Task, "JFP3_Task", 1024, NULL, 1, &JatayuFightPhase_SubHandler);
+        // vTaskSuspend(USARTCommTask_Handler);
+        vTaskSuspend(PlayTask_Handler);
+
+        Jatayu_Horizontal.goToWhatPosition(150.0);
+        Jatayu.JatayuDirectControl(1, 90, 200);
+        RahwanaSita.defaultFaceOrientation();
+        RahwanaSita_Horizontal.goToWhatPosition(300.0);
         SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_TAUNT);
         // (1018) you pathetic avian !
         vTaskDelay(1018 / portTICK_PERIOD_MS);
+        RahwanaSita.RahwanaPointToFront();
+        vTaskDelay(3477 - 700 / portTICK_PERIOD_MS);
 
         // (3477)get back here !
+        RahwanaSita.RahwanaLowPointToFront();
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        RahwanaSita.RahwanaDownFront();
+
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
+        Jatayu_Horizontal.goToWhatPosition(540.0);
+
+        xTaskCreate(JFFP_Task, "JFFP_Task", 1024, NULL, 1, &JatayuFightPhase_Handler);
+        xTaskCreate(RFFP_Task, "RFFP_Task", 1024, NULL, 1, &RahwanaFightPhase_Handler);
+
+        // vTaskSuspend(USARTCommTask_Handler);
+        vTaskSuspend(PlayTask_Handler); // Suspend the USART task while moving
+
+        RahwanaSita_Horizontal.goToWhatPosition(350.0);
+        RahwanaSita.RahwanaPointToFront();
+
+        Jatayu_Horizontal.LeaveTheScene();
+
+        RahwanaSita.RahwanaDownFront();
+        RahwanaSita_Horizontal.LeaveTheScene();
 
         /* End */
 
@@ -637,6 +910,7 @@ void MainFunction::Calibration::VSlotCalibration()
 void MainFunction::Calibration::Wayang_Servo()
 {
     Jatayu_Horizontal.LeaveTheScene();
+    Jatayu.flick();
     Jatayu.defaultFaceOrientation();
     Jatayu.JatayuDefaultFly();
 

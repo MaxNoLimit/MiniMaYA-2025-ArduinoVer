@@ -14,6 +14,8 @@
 #define WAYANGSERVO_TASK_HEAP 1024
 
 /* For TMC2209 Purpose */
-#define HOMING_TMC_THRS_1 30
-#define HOMING_TMC_THRS_2 30
+#define HOMING_TMC_THRS_1 25
+#define HOMING_TMC_THRS_2 25
+
+// Constant speed: 73.58 mm/s
 #endif // INC_CONFIG_HPP

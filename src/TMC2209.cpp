@@ -77,7 +77,7 @@ void TMCWayang::Init()
         TMCDriver_Left.SGTHRS(100);
         break;
     }
-    // digitalWrite(getEnablePin(), HIGH);
+    // digitalWrite(getEnablePin(), LOW);
 }
 
 void TMCWayang::Spin_Steps(int steps, uint8_t dir)
@@ -131,11 +131,11 @@ void TMCWayang::goToWhatPosition(float desiredPosition)
 {
     if (desiredPosition > getCurrentPosition())
     {
-        Spin_Steps(mm_distance_to_steps((float)(desiredPosition - getCurrentPosition() - DELRIN_SPACER_DISTANCE)), getWalkToSceneDir());
+        Spin_Steps(mm_distance_to_steps((float)(desiredPosition - getCurrentPosition())), getWalkToSceneDir());
     }
     else
     {
-        Spin_Steps(mm_distance_to_steps((float)(getCurrentPosition() - desiredPosition - DELRIN_SPACER_DISTANCE)), getLeaveTheSceneDir());
+        Spin_Steps(mm_distance_to_steps((float)(getCurrentPosition() - desiredPosition)), getLeaveTheSceneDir());
     }
     setCurrentPosition(desiredPosition);
 }

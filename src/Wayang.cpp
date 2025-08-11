@@ -12,7 +12,7 @@ void Wayang::JatayuTakeoff()
 // Takes 700 ms
 void Wayang::JatayuDive()
 {
-    moveWhatServoWithBitBang(1, 145, 200);
+    moveWhatServoWithBitBang(1, 180, 200);
     moveWhatServoWithBitBang(2, 0, 500);
 }
 
@@ -48,7 +48,7 @@ void Wayang::JatayuTalkSide()
 void Wayang::JatayuDefaultFly()
 {
     // defaultFaceOrientation();
-    moveWhatServoWithBitBang(1, 45, 200);
+    moveWhatServoWithBitBang(1, 120, 200);
     moveWhatServoWithBitBang(2, 0, 500);
 }
 
@@ -98,14 +98,14 @@ void Wayang::SitaPointToSelf()
 void Wayang::RahwanaPointToFront()
 {
     moveWhatServoWithBitBang(3, 0, 500);
-    moveWhatServoWithBitBang(4, 72, 200);
+    moveWhatServoWithBitBang(4, 40, 200);
 }
 
 // Takes 700 ms
 void Wayang::RahwanaLowPointToFront()
 {
     moveWhatServoWithBitBang(3, 90, 500);
-    moveWhatServoWithBitBang(4, 80, 200);
+    moveWhatServoWithBitBang(4, 70, 200);
 }
 
 // Takes 500 ms needs to Down Front first
@@ -117,16 +117,16 @@ void Wayang::RahwanaMiddleFront()
 // Takes 700 ms
 void Wayang::RahwanaDownFront()
 {
-    moveWhatServoWithBitBang(4, 80, 200);
+    moveWhatServoWithBitBang(4, 50, 200);
     moveWhatServoWithBitBang(3, 180, 500);
 }
 
 // Takes 900 ms
 void Wayang::RahwanaPointToSelf()
 {
-    moveWhatServoWithBitBang(4, 140, 200);
+    moveWhatServoWithBitBang(4, 120, 200);
     moveWhatServoWithBitBang(3, 0, 500);
-    moveWhatServoWithBitBang(4, 110, 200);
+    moveWhatServoWithBitBang(4, 80, 200);
 }
 
 void Wayang::defaultHandPosition()
