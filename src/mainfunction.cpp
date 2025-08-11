@@ -55,36 +55,60 @@ void MainFunction::System_Setup()
     vTaskStartScheduler();
 }
 
-static void RFP1_Task()
+static void RFP1_Task(void *pvParam)
 {
+    for (;;)
+    {
+    }
 }
 
-static void RFP2_Task()
+static void RFP2_Task(void *pvParam)
 {
+    for (;;)
+    {
+    }
 }
 
-static void RFP3_Task()
+static void RFP3_Task(void *pvParam)
 {
+    for (;;)
+    {
+    }
 }
 
-static void RFFP_Task()
+static void RFFP_Task(void *pvParam)
 {
+    for (;;)
+    {
+    }
 }
 
-static void JFP1_Task()
+static void JFP1_Task(void *pvParam)
 {
+    for (;;)
+    {
+    }
 }
 
-static void JFP2_Task()
+static void JFP2_Task(void *pvParam)
 {
+    for (;;)
+    {
+    }
 }
 
-static void JFP3_Task()
+static void JFP3_Task(void *pvParam)
 {
+    for (;;)
+    {
+    }
 }
 
-static void JFFP_Task()
+static void JFFP_Task(void *pvParam)
 {
+    for (;;)
+    {
+    }
 }
 
 static void USART_Comm_Task(void *pvParam)
@@ -392,10 +416,11 @@ static void Play_Task(void *pvParam)
         // Back to position then switch to Rahwana
         SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
         RahwanaSita_Horizontal.goToWhatPosition(0.0);
+
         RahwanaSita.defaultFaceOrientation();
         RahwanaSita_Horizontal.goToWhatPosition(200.0);
-
         /* Jatayu */
+
         Jatayu_Horizontal.goToWhatPosition(200.0);
 
         // *Garuda sounds*
@@ -539,23 +564,25 @@ static void Play_Task(void *pvParam)
         // Battle ends with Rahwana walking off-stage.
         RahwanaSita_Horizontal.goToWhatPosition(0.0);
 
-        /* Other voice clips reference:
+        /* Other voice clips reference: */
 
-        (783) Rahwana_Attack
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_ATTACK);
+        // (783) Rahwana_Attack
+        vTaskDelay(783 / portTICK_PERIOD_MS);
 
-        (937) Rahwana_Hurt1
+        // (937) Rahwana_Hurt1
 
-        (904) Rahwana_Hurt2
+        // (904) Rahwana_Hurt2
 
-        (663) Rahwana_Hurt3
+        // (663) Rahwana_Hurt3
 
-        Rahwana_Taunt:
+        /* Rahwana_Taunt: */
 
-        (1018) you pathetic avian!
+        SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_TAUNT);
+        // (1018) you pathetic avian !
+        vTaskDelay(1018 / portTICK_PERIOD_MS);
 
-        (3477) get back here!
-
-        */
+        // (3477)get back here !
 
         /* End */
 

@@ -82,14 +82,14 @@ void Wayang::SitaMiddleFront()
 // Takes 700 ms
 void Wayang::SitaDownFront()
 {
-    moveWhatServoWithBitBang(1, 0, 500);
     moveWhatServoWithBitBang(2, 121, 200);
+    moveWhatServoWithBitBang(1, 35, 500);
 }
 
 // Takes 900 ms
 void Wayang::SitaPointToSelf()
 {
-    moveWhatServoWithBitBang(2, 60, 200);
+    moveWhatServoWithBitBang(2, 40, 200);
     moveWhatServoWithBitBang(1, 180, 500);
     moveWhatServoWithBitBang(2, 100, 200);
 }
@@ -117,8 +117,8 @@ void Wayang::RahwanaMiddleFront()
 // Takes 700 ms
 void Wayang::RahwanaDownFront()
 {
+    moveWhatServoWithBitBang(4, 80, 200);
     moveWhatServoWithBitBang(3, 180, 500);
-    moveWhatServoWithBitBang(4, 87, 200);
 }
 
 // Takes 900 ms

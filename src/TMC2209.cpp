@@ -10,6 +10,7 @@ TMC2209Stepper TMCDriver_Left(&MY_TMC_USART_PORT, R_SENSE, DRIVER_ADDRESS2);
 
 TMCWayang::TMCWayang(String leftOrRight)
 {
+    // MY_TMC_USART_PORT.begin(115200);
     if (leftOrRight == "right")
     {
         setDriverAddress(DRIVER_ADDRESS1);
@@ -40,7 +41,7 @@ TMCWayang::~TMCWayang()
 void TMCWayang::Init()
 {
     MY_TMC_USART_PORT.begin(115200);
-    digitalWrite(getEnablePin(), LOW);
+    digitalWrite(getEnablePin(), HIGH); // Disable driver initially
 
     switch (getDriverAddress())
     {
@@ -76,7 +77,7 @@ void TMCWayang::Init()
         TMCDriver_Left.SGTHRS(100);
         break;
     }
-    digitalWrite(getEnablePin(), HIGH);
+    // digitalWrite(getEnablePin(), HIGH);
 }
 
 void TMCWayang::Spin_Steps(int steps, uint8_t dir)
