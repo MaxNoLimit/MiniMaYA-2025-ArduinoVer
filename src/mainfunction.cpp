@@ -113,15 +113,14 @@ static void JFP1_SubTask(void *pvParam)
     for (;;)
     {
         Jatayu_Horizontal.goToWhatPosition(190.0); // Jatayu moves to the front position
-        if (PlayTask_Handler != NULL)
-        {
-            vTaskResume(PlayTask_Handler); // Suspend the play task while moving
-        }
         if (USARTCommTask_Handler != NULL)
         {
             vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
         }
-
+        if (PlayTask_Handler != NULL)
+        {
+            vTaskResume(PlayTask_Handler); // Suspend the play task while moving
+        }
         vTaskDelete(NULL); // Delete the subtask after moving
     }
 }
@@ -140,13 +139,13 @@ static void JFP2_SubTask(void *pvParam)
     for (;;)
     {
         Jatayu_Horizontal.goToWhatPosition(600.0);
-        if (PlayTask_Handler != NULL)
-        {
-            vTaskResume(PlayTask_Handler); // Resume play task if it exists
-        }
         if (USARTCommTask_Handler != NULL)
         {
             vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
+        }
+        if (PlayTask_Handler != NULL)
+        {
+            vTaskResume(PlayTask_Handler); // Resume play task if it exists
         }
 
         vTaskDelete(NULL); // Delete the subtask after moving
@@ -159,13 +158,13 @@ static void JFP3_Task(void *pvParam)
     {
         Jatayu.defaultFaceOrientation(); // Jatayu moves to the default face orientation
         Jatayu_Horizontal.goToWhatPosition(280.0);
-        if (PlayTask_Handler != NULL)
-        {
-            vTaskResume(PlayTask_Handler); // Resume play task if it exists
-        }
         if (USARTCommTask_Handler != NULL)
         {
             vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
+        }
+        if (PlayTask_Handler != NULL)
+        {
+            vTaskResume(PlayTask_Handler); // Resume play task if it exists
         }
         vTaskDelete(NULL); // Delete the subtask after moving
     }
@@ -177,13 +176,13 @@ static void JFP3_AntiTask(void *pvParam)
     {
         Jatayu.flick(); // Jatayu moves to the default face orientation
         Jatayu_Horizontal.goToWhatPosition(600.0);
-        if (PlayTask_Handler != NULL)
-        {
-            vTaskResume(PlayTask_Handler); // Resume play task if it exists
-        }
         if (USARTCommTask_Handler != NULL)
         {
             vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
+        }
+        if (PlayTask_Handler != NULL)
+        {
+            vTaskResume(PlayTask_Handler); // Resume play task if it exists
         }
         vTaskDelete(NULL); // Delete the subtask after flicking
     }
@@ -194,13 +193,13 @@ static void JFFP_Task(void *pvParam)
     for (;;)
     {
         Jatayu.JatayuDirectControl(1, 0, 200); // Jatayu moves to the front position
-        if (PlayTask_Handler != NULL)
-        {
-            vTaskResume(PlayTask_Handler); // Resume play task if it exists
-        }
         if (USARTCommTask_Handler != NULL)
         {
             vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
+        }
+        if (PlayTask_Handler != NULL)
+        {
+            vTaskResume(PlayTask_Handler); // Resume play task if it exists
         }
         vTaskDelete(NULL); // Delete the subtask after moving
     }
@@ -211,13 +210,13 @@ static void JFFP_AntiTask(void *pvParam)
     for (;;)
     {
         Jatayu_Horizontal.goToWhatPosition(0.0);
-        if (PlayTask_Handler != NULL)
-        {
-            vTaskResume(PlayTask_Handler); // Resume play task if it exists
-        }
         if (USARTCommTask_Handler != NULL)
         {
             vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
+        }
+        if (PlayTask_Handler != NULL)
+        {
+            vTaskResume(PlayTask_Handler); // Resume play task if it exists
         }
         vTaskDelete(NULL); // Delete the subtask after moving
     }
@@ -778,10 +777,12 @@ static void Play_Task(void *pvParam)
         SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_ATTACK);
         // (783) Rahwana_Attack
         vTaskDelay(283 / portTICK_PERIOD_MS);
-        xTaskCreate(RFP1_Task, "RFP1_Task", 1024, NULL, 1, &RahwanaFightPhase_Handler);
-        xTaskCreate(JFP1_Task, "JFP1_Task", 1024, NULL, 1, &JatayuFightPhase_Handler);
-        xTaskCreate(JFP1_SubTask, "JFP1_SubTask", 1024, NULL, 1, &JatayuFightPhase_SubHandler);
-        // vTaskSuspend(USARTCommTask_Handler);
+        xTaskCreate(RFP1_Task, "RFP1_Task", 2048, NULL, 1, &RahwanaFightPhase_Handler);
+        xTaskCreate(JFP1_Task, "JFP1_Task", 2048, NULL, 1, &JatayuFightPhase_Handler);
+        xTaskCreate(JFP1_SubTask, "JFP1_SubTask", 2048, NULL, 1, &JatayuFightPhase_SubHandler);
+
+        // Suspend USART task as well to save clocks
+        vTaskSuspend(USARTCommTask_Handler);
         vTaskSuspend(PlayTask_Handler); // Suspend the play task while moving
 
         SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
@@ -810,19 +811,25 @@ static void Play_Task(void *pvParam)
 
         SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
 
-        xTaskCreate(RFP3_Task, "RFP3_Task", 1024, NULL, 1, &RahwanaFightPhase_SubHandler);
-        xTaskCreate(JFP3_Task, "JFP3_Task", 1024, NULL, 1, &JatayuFightPhase_SubHandler);
-        // vTaskSuspend(USARTCommTask_Handler);
+        xTaskCreate(RFP3_Task, "RFP3_Task", 2048, NULL, 1, &RahwanaFightPhase_SubHandler);
+        xTaskCreate(JFP3_Task, "JFP3_Task", 2048, NULL, 1, &JatayuFightPhase_SubHandler);
+
+        // Suspend USART task as well to save clocks
+        vTaskSuspend(USARTCommTask_Handler);
         vTaskSuspend(PlayTask_Handler);
 
-        xTaskCreate(RFP3_AntiTask, "RFP3_AntiTask", 1024, NULL, 1, &RahwanaFightPhase_SubHandler);
-        xTaskCreate(JFP3_AntiTask, "JFP3_AntiTask", 1024, NULL, 1, &JatayuFightPhase_SubHandler);
-        // vTaskSuspend(USARTCommTask_Handler);
+        xTaskCreate(RFP3_AntiTask, "RFP3_AntiTask", 2048, NULL, 1, &RahwanaFightPhase_SubHandler);
+        xTaskCreate(JFP3_AntiTask, "JFP3_AntiTask", 2048, NULL, 1, &JatayuFightPhase_SubHandler);
+
+        // Suspend USART task as well to save clocks
+        vTaskSuspend(USARTCommTask_Handler);
         vTaskSuspend(PlayTask_Handler);
 
-        xTaskCreate(RFP3_Task, "RFP3_Task", 1024, NULL, 1, &RahwanaFightPhase_SubHandler);
-        xTaskCreate(JFP3_Task, "JFP3_Task", 1024, NULL, 1, &JatayuFightPhase_SubHandler);
-        // vTaskSuspend(USARTCommTask_Handler);
+        xTaskCreate(RFP3_Task, "RFP3_Task", 2048, NULL, 1, &RahwanaFightPhase_SubHandler);
+        xTaskCreate(JFP3_Task, "JFP3_Task", 2048, NULL, 1, &JatayuFightPhase_SubHandler);
+
+        // Suspend USART task as well to save clocks
+        vTaskSuspend(USARTCommTask_Handler);
         vTaskSuspend(PlayTask_Handler);
 
         Jatayu_Horizontal.goToWhatPosition(150.0);
@@ -843,11 +850,12 @@ static void Play_Task(void *pvParam)
         SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
         Jatayu_Horizontal.goToWhatPosition(540.0);
 
-        xTaskCreate(JFFP_Task, "JFFP_Task", 1024, NULL, 1, &JatayuFightPhase_Handler);
-        xTaskCreate(RFFP_Task, "RFFP_Task", 1024, NULL, 1, &RahwanaFightPhase_Handler);
+        xTaskCreate(JFFP_Task, "JFFP_Task", 2048, NULL, 1, &JatayuFightPhase_Handler);
+        xTaskCreate(RFFP_Task, "RFFP_Task", 2048, NULL, 1, &RahwanaFightPhase_Handler);
 
-        // vTaskSuspend(USARTCommTask_Handler);
-        vTaskSuspend(PlayTask_Handler); // Suspend the USART task while moving
+        // Suspend USART task as well to save clocks
+        vTaskSuspend(USARTCommTask_Handler);
+        vTaskSuspend(PlayTask_Handler);
 
         RahwanaSita_Horizontal.goToWhatPosition(350.0);
         RahwanaSita.RahwanaPointToFront();
