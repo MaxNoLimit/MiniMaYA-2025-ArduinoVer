@@ -32,3 +32,10 @@ void SoundSystem::ResumeAudio()
     myDFPlayer.start(); // Resume the paused audio
     Serial2.println(F("Audio playback resumed."));
 }
+
+void SoundSystem::PlayBackgroundMusic()
+{
+    Serial2.println(F("Background music started."));
+    myDFPlayer.volume(18); // Set a lower volume for background music
+    PlayAudio(WHAT_AUDIO_FOLDER::SYSTEM_FOLDER, SYSTEM_AUDIO::BACKGROUND_MUSIC);
+}

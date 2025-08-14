@@ -66,6 +66,7 @@ public:
     void RahwanaMiddleFront();
     void RahwanaDownFront();
     void RahwanaPointToSelf();
+    void RahwanaDirectControl(uint8_t ServoNum, uint8_t Deg, int Duration);
 
     void SitaPointToFront();
     void SitaLowPointToFront();

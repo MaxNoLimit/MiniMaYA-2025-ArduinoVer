@@ -48,8 +48,8 @@ void Wayang::JatayuTalkSide()
 void Wayang::JatayuDefaultFly()
 {
     // defaultFaceOrientation();
-    moveWhatServoWithBitBang(1, 120, 200);
-    moveWhatServoWithBitBang(2, 0, 500);
+    moveWhatServoWithBitBang(1, 110, 350);
+    moveWhatServoWithBitBang(2, 0, 350);
 }
 
 // parse values from outside class into class for direct control of servos
@@ -127,6 +127,11 @@ void Wayang::RahwanaPointToSelf()
     moveWhatServoWithBitBang(4, 120, 200);
     moveWhatServoWithBitBang(3, 0, 500);
     moveWhatServoWithBitBang(4, 80, 200);
+}
+
+void Wayang::RahwanaDirectControl(uint8_t ServoNum, uint8_t Deg, int Duration)
+{
+    moveWhatServoWithBitBang(ServoNum, Deg, Duration);
 }
 
 void Wayang::defaultHandPosition()

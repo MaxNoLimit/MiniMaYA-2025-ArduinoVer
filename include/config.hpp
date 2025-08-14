@@ -8,10 +8,8 @@
 #define LEAVE_THE_SCENE_DISTANCE 1000 // Steps to leave the scene
 
 /* For FreeRTOS purpose */
-#define USART_COMM_TASK_HEAP 1024
+#define USART_COMM_TASK_HEAP 512
 #define PLAY_TASK_HEAP 1024
-#define VSLOT_CALIBRATION_TASK_HEAP 1024
-#define WAYANGSERVO_TASK_HEAP 1024
 
 /* For TMC2209 Purpose */
 #define HOMING_TMC_THRS_1 25
