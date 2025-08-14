@@ -55,64 +55,83 @@ void MainFunction::System_Setup()
         Serial2.println(F("Failed to create USART task!"));
     }
 
+    /* Create RFP Tasks */
+    xTaskCreate(RFP1_Task, "RFP1_Task", 1024, NULL, 2, &RFPHandler[0]);
+    xTaskCreate(RFP3_Task, "RFP3_Task", 1024, NULL, 2, &RFPHandler[1]);
+    xTaskCreate(RFP3_AntiTask, "RFP3_AntiTask", 1024, NULL, 2, &RFPHandler[2]);
+    xTaskCreate(RFFP_Task, "RFFP_Task", 1024, NULL, 2, &RFPHandler[3]);
+
+    /* Create JFP Tasks */
+    xTaskCreate(JFP1_Task, "JFP1_Task", 1024, NULL, 2, &JFPHandler[0]);
+    xTaskCreate(JFP1_SubTask, "JFP1_SubTask", 1024, NULL, 2, &JFPHandler[1]);
+    xTaskCreate(JFP3_Task, "JFP3_Task", 1024, NULL, 2, &JFPHandler[2]);
+    xTaskCreate(JFP3_AntiTask, "JFP3_AntiTask", 1024, NULL, 2, &JFPHandler[3]);
+    xTaskCreate(JFFP_Task, "JFFP_Task", 1024, NULL, 2, &JFPHandler[4]);
+    xTaskCreate(JFFP_AntiTask, "JFFP_AntiTask", 1024, NULL, 2, &JFPHandler[5]);
+
     vTaskStartScheduler();
 }
 
 static void RFP1_Task(void *pvParam)
 {
+    Serial2.println(F("RFP1_Task created!"));
+    vTaskSuspend(NULL);
     while (1)
     {
         RahwanaSita.RahwanaPointToFront();
-        vTaskDelete(NULL);
-    }
-}
-
-static void RFP2_Task(void *pvParam)
-{
-    for (;;)
-    {
+        vTaskSuspend(NULL);
     }
 }
 
 static void RFP3_Task(void *pvParam)
 {
+    Serial2.println(F("RFP3_Task created!"));
+    vTaskSuspend(NULL);
     while (1)
     {
         RahwanaSita.flick();
-        vTaskDelete(NULL); // Delete the subtask after flicking
+        vTaskSuspend(NULL);
     }
 }
 
 static void RFP3_AntiTask(void *pvParam)
 {
+    Serial2.println(F("RFP3_AntiTask created!"));
+    vTaskSuspend(NULL);
     while (1)
     {
         RahwanaSita.defaultFaceOrientation();
-        vTaskDelete(NULL); // Delete the subtask after resetting face orientation
+        vTaskSuspend(NULL); // Delete the subtask after resetting face orientation
     }
 }
 
 static void RFFP_Task(void *pvParam)
 {
+    Serial2.println(F("RFFP_Task created!"));
+    vTaskSuspend(NULL);
     while (1)
     {
         RahwanaSita.RahwanaDownFront();
         RahwanaSita.RahwanaMiddleFront();
-        vTaskDelete(NULL);
+        vTaskSuspend(NULL);
     }
 }
 
 static void JFP1_Task(void *pvParam)
 {
+    Serial2.println(F("JFP1_Task created!"));
+    vTaskSuspend(NULL);
     while (1)
     {
         Jatayu.JatayuDirectControl(1, 0, 700); // Jatayu moves to the front position
-        vTaskDelete(NULL);                     // Delete the subtask after moving
+        vTaskSuspend(NULL);                    // Delete the subtask after moving
     }
 }
 
 static void JFP1_SubTask(void *pvParam)
 {
+    Serial2.println(F("JFP1_SubTask created!"));
+    vTaskSuspend(NULL); // Suspend the task until it is resumed by the main task
     while (1)
     {
         Jatayu_Horizontal.goToWhatPosition(190.0); // Jatayu moves to the front position
@@ -124,39 +143,41 @@ static void JFP1_SubTask(void *pvParam)
         {
             vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
         }
-        vTaskDelete(NULL); // Delete the subtask after moving
+        vTaskSuspend(NULL); // Delete the subtask after moving
     }
 }
 
-static void JFP2_Task(void *pvParam)
-{
-    while (1)
-    {
-        Jatayu.JatayuDirectControl(3, 180, 5500); // Jatayu moves to the default position
-        vTaskDelete(NULL);                        // Delete the subtask after moving
-    }
-}
+// static void JFP2_Task(void *pvParam)
+// {
+//     while (1)
+//     {
+//         Jatayu.JatayuDirectControl(3, 180, 5500); // Jatayu moves to the default position
+//         vTaskDelete(NULL);                        // Delete the subtask after moving
+//     }
+// }
 
-static void JFP2_SubTask(void *pvParam)
-{
-    while (1)
-    {
-        Jatayu_Horizontal.goToWhatPosition(600.0);
-        if (PlayTask_Handler != NULL)
-        {
-            vTaskResume(PlayTask_Handler); // Resume play task if it exists
-        }
-        if (USARTCommTask_Handler != NULL)
-        {
-            vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
-        }
+// static void JFP2_SubTask(void *pvParam)
+// {
+//     while (1)
+//     {
+//         Jatayu_Horizontal.goToWhatPosition(600.0);
+//         if (PlayTask_Handler != NULL)
+//         {
+//             vTaskResume(PlayTask_Handler); // Resume play task if it exists
+//         }
+//         if (USARTCommTask_Handler != NULL)
+//         {
+//             vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
+//         }
 
-        vTaskDelete(NULL); // Delete the subtask after moving
-    }
-}
+//         vTaskDelete(NULL); // Delete the subtask after moving
+//     }
+// }
 
 static void JFP3_Task(void *pvParam)
 {
+    Serial2.println(F("JFP3_Task created!"));
+    vTaskSuspend(NULL); // Suspend the task until it is resumed by the main task
     while (1)
     {
         Jatayu.defaultFaceOrientation(); // Jatayu moves to the default face orientation
@@ -169,12 +190,14 @@ static void JFP3_Task(void *pvParam)
         {
             vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
         }
-        vTaskDelete(NULL); // Delete the subtask after moving
+        vTaskSuspend(NULL); // Delete the subtask after moving
     }
 }
 
 static void JFP3_AntiTask(void *pvParam)
 {
+    Serial2.println(F("JFP3_AntiTask created!"));
+    vTaskSuspend(NULL); // Suspend the task until it is resumed by the main task
     while (1)
     {
         Jatayu.flick(); // Jatayu moves to the default face orientation
@@ -187,12 +210,14 @@ static void JFP3_AntiTask(void *pvParam)
         {
             vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
         }
-        vTaskDelete(NULL); // Delete the subtask after flicking
+        vTaskSuspend(NULL); // Delete the subtask after flicking
     }
 }
 
 static void JFFP_Task(void *pvParam)
 {
+    Serial2.println(F("JFFP_Task created!"));
+    vTaskSuspend(NULL); // Suspend the task until it is resumed by the main task
     while (1)
     {
         Jatayu.JatayuDirectControl(1, 0, 700);     // Jatayu moves to the front position
@@ -205,12 +230,14 @@ static void JFFP_Task(void *pvParam)
         {
             vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
         }
-        vTaskDelete(NULL); // Delete the subtask after moving
+        vTaskSuspend(NULL); // Delete the subtask after moving
     }
 }
 
 static void JFFP_AntiTask(void *pvParam)
 {
+    Serial2.println(F("JFFP_AntiTask created!"));
+    vTaskSuspend(NULL); // Suspend the task until it is resumed by the main task
     while (1)
     {
         Jatayu_Horizontal.goToWhatPosition(0.0);
@@ -222,7 +249,7 @@ static void JFFP_AntiTask(void *pvParam)
         {
             vTaskResume(USARTCommTask_Handler); // Resume USART task if it exists
         }
-        vTaskDelete(NULL); // Delete the subtask after moving
+        vTaskSuspend(NULL); // Delete the subtask after moving
     }
 }
 
@@ -801,9 +828,13 @@ static void Play_Task(void *pvParam)
         SoundSystem::PlayAudio(WHAT_AUDIO_FOLDER::THE_SHOW_FOLDER, SHOW_AUDIO::RAHWANA_ATTACK);
         // (783) Rahwana_Attack
         vTaskDelay(283 / portTICK_PERIOD_MS);
-        xTaskCreate(RFP1_Task, "RFP1_Task", 1024, NULL, 2, NULL);
-        xTaskCreate(JFP1_Task, "JFP1_Task", 1024, NULL, 2, NULL);
-        xTaskCreate(JFP1_SubTask, "JFP1_SubTask", 1024, NULL, 2, NULL);
+
+        // xTaskCreate(RFP1_Task, "RFP1_Task", 1024, NULL, 2, NULL);
+        vTaskResume(RFPHandler[0]);
+        // xTaskCreate(JFP1_Task, "JFP1_Task", 1024, NULL, 2, NULL);
+        vTaskResume(JFPHandler[0]);
+        // xTaskCreate(JFP1_SubTask, "JFP1_SubTask", 1024, NULL, 2, NULL);
+        vTaskResume(JFPHandler[1]);
 
         vTaskSuspend(PlayTask_Handler); // Suspend the play task while moving
         vTaskSuspend(USARTCommTask_Handler);
@@ -835,22 +866,28 @@ static void Play_Task(void *pvParam)
 
         SoundSystem::PlayBackgroundMusic();
 
-        xTaskCreate(RFP3_Task, "RFP3_Task", 1024, NULL, 2, NULL);
-        xTaskCreate(JFP3_Task, "JFP3_Task", 1024, NULL, 2, NULL);
+        // xTaskCreate(RFP3_Task, "RFP3_Task", 1024, NULL, 2, NULL);
+        vTaskResume(RFPHandler[1]);
+        // xTaskCreate(JFP3_Task, "JFP3_Task", 1024, NULL, 2, NULL);
+        vTaskResume(JFPHandler[2]);
 
         // Suspend USART task as well to save clocks
         vTaskSuspend(PlayTask_Handler);
         vTaskSuspend(USARTCommTask_Handler);
 
-        xTaskCreate(RFP3_AntiTask, "RFP3_AntiTask", 1024, NULL, 2, NULL);
-        xTaskCreate(JFP3_AntiTask, "JFP3_AntiTask", 1024, NULL, 2, NULL);
+        // xTaskCreate(RFP3_AntiTask, "RFP3_AntiTask", 1024, NULL, 2, NULL);
+        vTaskResume(RFPHandler[2]);
+        // xTaskCreate(JFP3_AntiTask, "JFP3_AntiTask", 1024, NULL, 2, NULL);
+        vTaskResume(JFPHandler[3]);
 
         // Suspend USART task as well to save clocks
         vTaskSuspend(PlayTask_Handler);
         vTaskSuspend(USARTCommTask_Handler);
 
-        xTaskCreate(RFP3_Task, "RFP3_Task", 1024, NULL, 2, NULL);
-        xTaskCreate(JFP3_Task, "JFP3_Task", 1024, NULL, 2, NULL);
+        // xTaskCreate(RFP3_Task, "RFP3_Task", 1024, NULL, 2, NULL);
+        vTaskResume(RFPHandler[1]);
+        // xTaskCreate(JFP3_Task, "JFP3_Task", 1024, NULL, 2, NULL);
+        vTaskResume(JFPHandler[2]);
 
         // Suspend USART task as well to save clocks
         vTaskSuspend(PlayTask_Handler);
@@ -874,8 +911,10 @@ static void Play_Task(void *pvParam)
         SoundSystem::PlayBackgroundMusic();
         Jatayu_Horizontal.goToWhatPosition(520.0);
 
-        xTaskCreate(JFFP_Task, "JFFP_Task", 1024, NULL, 2, NULL);
-        xTaskCreate(RFFP_Task, "RFFP_Task", 1024, NULL, 2, NULL);
+        // xTaskCreate(JFFP_Task, "JFFP_Task", 1024, NULL, 2, NULL);
+        vTaskResume(JFPHandler[4]);
+        // xTaskCreate(RFFP_Task, "RFFP_Task", 1024, NULL, 2, NULL);
+        vTaskResume(RFPHandler[3]);
 
         // Suspend USART task as well to save clocks
         vTaskSuspend(PlayTask_Handler);
